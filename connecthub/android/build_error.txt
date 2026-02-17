@@ -1,0 +1,456 @@
+> Task :gradle-plugin:checkKotlinGradlePluginConfigurationErrors
+> Task :gradle-plugin:compileKotlin UP-TO-DATE
+> Task :gradle-plugin:compileJava NO-SOURCE
+> Task :gradle-plugin:pluginDescriptors UP-TO-DATE
+> Task :gradle-plugin:processResources UP-TO-DATE
+> Task :gradle-plugin:classes UP-TO-DATE
+> Task :gradle-plugin:jar UP-TO-DATE
+
+> Configure project :app
+WARNING: The option setting 'android.defaults.buildfeatures.buildconfig=true' is deprecated.
+The current default is 'false'.
+It will be removed in version 9.0 of the Android Gradle plugin.
+You can resolve this warning in Android Studio via `Refactor` > `Migrate BuildConfig to Gradle Build Files`
+
+> Task :app:buildCodegenCLI SKIPPED
+> Task :app:generateCodegenSchemaFromJavaScript SKIPPED
+> Task :app:generateCodegenArtifactsFromSchema SKIPPED
+> Task :app:generatePackageList
+> Task :app:preBuild
+> Task :app:preReleaseBuild
+> Task :app:generateReleaseBuildConfig UP-TO-DATE
+> Task :app:javaPreCompileRelease UP-TO-DATE
+> Task :react-native-background-actions:preBuild UP-TO-DATE
+> Task :react-native-background-actions:preReleaseBuild UP-TO-DATE
+> Task :react-native-background-actions:writeReleaseAarMetadata UP-TO-DATE
+> Task :react-native-device-info:preBuild UP-TO-DATE
+> Task :react-native-device-info:preReleaseBuild UP-TO-DATE
+> Task :react-native-device-info:writeReleaseAarMetadata UP-TO-DATE
+> Task :react-native-encrypted-storage:preBuild UP-TO-DATE
+> Task :react-native-encrypted-storage:preReleaseBuild UP-TO-DATE
+> Task :react-native-encrypted-storage:writeReleaseAarMetadata UP-TO-DATE
+> Task :react-native-get-sms-android:preBuild UP-TO-DATE
+> Task :react-native-get-sms-android:preReleaseBuild UP-TO-DATE
+> Task :react-native-get-sms-android:writeReleaseAarMetadata UP-TO-DATE
+> Task :react-native-randombytes:preBuild UP-TO-DATE
+> Task :react-native-randombytes:preReleaseBuild UP-TO-DATE
+> Task :react-native-randombytes:writeReleaseAarMetadata UP-TO-DATE
+> Task :react-native-vector-icons:preBuild UP-TO-DATE
+> Task :react-native-vector-icons:preReleaseBuild UP-TO-DATE
+> Task :react-native-vector-icons:writeReleaseAarMetadata UP-TO-DATE
+> Task :react-native-webview:preBuild UP-TO-DATE
+> Task :react-native-webview:preReleaseBuild UP-TO-DATE
+> Task :react-native-webview:writeReleaseAarMetadata UP-TO-DATE
+> Task :sentry_react-native:preBuild UP-TO-DATE
+> Task :sentry_react-native:preReleaseBuild UP-TO-DATE
+> Task :sentry_react-native:writeReleaseAarMetadata UP-TO-DATE
+> Task :app:checkReleaseAarMetadata UP-TO-DATE
+> Task :app:createBundleReleaseJsAndAssets UP-TO-DATE
+> Task :app:generateReleaseResValues UP-TO-DATE
+> Task :react-native-background-actions:generateReleaseResValues UP-TO-DATE
+> Task :react-native-background-actions:generateReleaseResources UP-TO-DATE
+> Task :react-native-background-actions:packageReleaseResources UP-TO-DATE
+> Task :react-native-device-info:generateReleaseResValues UP-TO-DATE
+> Task :react-native-device-info:generateReleaseResources UP-TO-DATE
+> Task :react-native-device-info:packageReleaseResources UP-TO-DATE
+> Task :react-native-encrypted-storage:generateReleaseResValues UP-TO-DATE
+> Task :react-native-encrypted-storage:generateReleaseResources UP-TO-DATE
+> Task :react-native-encrypted-storage:packageReleaseResources UP-TO-DATE
+> Task :react-native-get-sms-android:generateReleaseResValues UP-TO-DATE
+> Task :react-native-get-sms-android:generateReleaseResources UP-TO-DATE
+> Task :react-native-get-sms-android:packageReleaseResources UP-TO-DATE
+> Task :react-native-randombytes:generateReleaseResValues UP-TO-DATE
+> Task :react-native-randombytes:generateReleaseResources UP-TO-DATE
+> Task :react-native-randombytes:packageReleaseResources UP-TO-DATE
+> Task :react-native-vector-icons:generateReleaseResValues UP-TO-DATE
+> Task :react-native-vector-icons:generateReleaseResources UP-TO-DATE
+> Task :react-native-vector-icons:packageReleaseResources UP-TO-DATE
+> Task :react-native-webview:generateReleaseResValues UP-TO-DATE
+> Task :react-native-webview:generateReleaseResources UP-TO-DATE
+> Task :react-native-webview:packageReleaseResources UP-TO-DATE
+> Task :sentry_react-native:generateReleaseResValues UP-TO-DATE
+> Task :sentry_react-native:generateReleaseResources UP-TO-DATE
+> Task :sentry_react-native:packageReleaseResources UP-TO-DATE
+> Task :app:mapReleaseSourceSetPaths UP-TO-DATE
+> Task :app:generateReleaseResources UP-TO-DATE
+> Task :app:mergeReleaseResources UP-TO-DATE
+> Task :app:createReleaseCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksRelease UP-TO-DATE
+> Task :react-native-background-actions:extractDeepLinksRelease UP-TO-DATE
+> Task :react-native-background-actions:processReleaseManifest UP-TO-DATE
+> Task :react-native-device-info:extractDeepLinksRelease UP-TO-DATE
+> Task :react-native-device-info:processReleaseManifest UP-TO-DATE
+> Task :react-native-encrypted-storage:extractDeepLinksRelease UP-TO-DATE
+> Task :react-native-encrypted-storage:processReleaseManifest UP-TO-DATE
+> Task :react-native-get-sms-android:extractDeepLinksRelease UP-TO-DATE
+> Task :react-native-get-sms-android:processReleaseManifest UP-TO-DATE
+> Task :react-native-randombytes:extractDeepLinksRelease UP-TO-DATE
+> Task :react-native-randombytes:processReleaseManifest UP-TO-DATE
+> Task :react-native-vector-icons:extractDeepLinksRelease UP-TO-DATE
+> Task :react-native-vector-icons:processReleaseManifest UP-TO-DATE
+> Task :react-native-webview:extractDeepLinksRelease UP-TO-DATE
+> Task :react-native-webview:processReleaseManifest UP-TO-DATE
+> Task :sentry_react-native:extractDeepLinksRelease UP-TO-DATE
+> Task :sentry_react-native:processReleaseManifest UP-TO-DATE
+> Task :app:processReleaseMainManifest UP-TO-DATE
+> Task :app:processReleaseManifest UP-TO-DATE
+> Task :app:processReleaseManifestForPackage UP-TO-DATE
+> Task :react-native-background-actions:compileReleaseLibraryResources UP-TO-DATE
+> Task :react-native-background-actions:parseReleaseLocalResources UP-TO-DATE
+> Task :react-native-background-actions:generateReleaseRFile UP-TO-DATE
+> Task :react-native-device-info:compileReleaseLibraryResources UP-TO-DATE
+> Task :react-native-device-info:parseReleaseLocalResources UP-TO-DATE
+> Task :react-native-device-info:generateReleaseRFile UP-TO-DATE
+> Task :react-native-encrypted-storage:compileReleaseLibraryResources UP-TO-DATE
+> Task :react-native-encrypted-storage:parseReleaseLocalResources UP-TO-DATE
+> Task :react-native-encrypted-storage:generateReleaseRFile UP-TO-DATE
+> Task :react-native-get-sms-android:compileReleaseLibraryResources UP-TO-DATE
+> Task :react-native-get-sms-android:parseReleaseLocalResources UP-TO-DATE
+> Task :react-native-get-sms-android:generateReleaseRFile UP-TO-DATE
+> Task :react-native-randombytes:compileReleaseLibraryResources UP-TO-DATE
+> Task :react-native-randombytes:parseReleaseLocalResources UP-TO-DATE
+> Task :react-native-randombytes:generateReleaseRFile UP-TO-DATE
+> Task :react-native-vector-icons:compileReleaseLibraryResources UP-TO-DATE
+> Task :react-native-vector-icons:parseReleaseLocalResources UP-TO-DATE
+> Task :react-native-vector-icons:generateReleaseRFile UP-TO-DATE
+> Task :react-native-webview:compileReleaseLibraryResources UP-TO-DATE
+> Task :react-native-webview:parseReleaseLocalResources UP-TO-DATE
+> Task :react-native-webview:generateReleaseRFile UP-TO-DATE
+> Task :sentry_react-native:compileReleaseLibraryResources UP-TO-DATE
+> Task :sentry_react-native:parseReleaseLocalResources UP-TO-DATE
+> Task :sentry_react-native:generateReleaseRFile UP-TO-DATE
+> Task :app:processReleaseResources UP-TO-DATE
+> Task :react-native-background-actions:generateReleaseBuildConfig UP-TO-DATE
+> Task :react-native-background-actions:javaPreCompileRelease UP-TO-DATE
+> Task :react-native-background-actions:compileReleaseJavaWithJavac UP-TO-DATE
+> Task :react-native-background-actions:bundleLibCompileToJarRelease UP-TO-DATE
+> Task :react-native-device-info:generateReleaseBuildConfig UP-TO-DATE
+> Task :react-native-device-info:javaPreCompileRelease UP-TO-DATE
+> Task :react-native-device-info:compileReleaseJavaWithJavac UP-TO-DATE
+> Task :react-native-device-info:bundleLibCompileToJarRelease UP-TO-DATE
+> Task :react-native-encrypted-storage:generateReleaseBuildConfig UP-TO-DATE
+> Task :react-native-encrypted-storage:javaPreCompileRelease UP-TO-DATE
+> Task :react-native-encrypted-storage:compileReleaseJavaWithJavac UP-TO-DATE
+> Task :react-native-encrypted-storage:bundleLibCompileToJarRelease UP-TO-DATE
+> Task :react-native-get-sms-android:generateReleaseBuildConfig UP-TO-DATE
+> Task :react-native-get-sms-android:javaPreCompileRelease UP-TO-DATE
+> Task :react-native-get-sms-android:compileReleaseJavaWithJavac UP-TO-DATE
+> Task :react-native-get-sms-android:bundleLibCompileToJarRelease UP-TO-DATE
+> Task :react-native-randombytes:generateReleaseBuildConfig UP-TO-DATE
+> Task :react-native-randombytes:javaPreCompileRelease UP-TO-DATE
+> Task :react-native-randombytes:compileReleaseJavaWithJavac UP-TO-DATE
+> Task :react-native-randombytes:bundleLibCompileToJarRelease UP-TO-DATE
+> Task :react-native-vector-icons:generateReleaseBuildConfig UP-TO-DATE
+> Task :react-native-vector-icons:javaPreCompileRelease UP-TO-DATE
+> Task :react-native-vector-icons:compileReleaseJavaWithJavac UP-TO-DATE
+> Task :react-native-vector-icons:bundleLibCompileToJarRelease UP-TO-DATE
+> Task :react-native-webview:checkKotlinGradlePluginConfigurationErrors
+> Task :react-native-webview:generateReleaseBuildConfig UP-TO-DATE
+> Task :react-native-webview:compileReleaseKotlin UP-TO-DATE
+> Task :react-native-webview:javaPreCompileRelease UP-TO-DATE
+> Task :react-native-webview:compileReleaseJavaWithJavac UP-TO-DATE
+> Task :react-native-webview:bundleLibCompileToJarRelease UP-TO-DATE
+> Task :sentry_react-native:generateReleaseBuildConfig UP-TO-DATE
+> Task :sentry_react-native:javaPreCompileRelease UP-TO-DATE
+> Task :sentry_react-native:compileReleaseJavaWithJavac UP-TO-DATE
+> Task :sentry_react-native:bundleLibCompileToJarRelease UP-TO-DATE
+> Task :app:compileReleaseJavaWithJavac UP-TO-DATE
+> Task :app:copyReactNativeVectorIconFonts UP-TO-DATE
+> Task :app:extractProguardFiles UP-TO-DATE
+> Task :react-native-background-actions:bundleLibRuntimeToJarRelease UP-TO-DATE
+> Task :react-native-background-actions:processReleaseJavaRes NO-SOURCE
+> Task :react-native-background-actions:createFullJarRelease UP-TO-DATE
+> Task :react-native-background-actions:extractProguardFiles UP-TO-DATE
+> Task :react-native-background-actions:generateReleaseLintModel UP-TO-DATE
+> Task :react-native-background-actions:prepareLintJarForPublish UP-TO-DATE
+> Task :react-native-device-info:bundleLibRuntimeToJarRelease UP-TO-DATE
+> Task :react-native-device-info:processReleaseJavaRes NO-SOURCE
+> Task :react-native-device-info:createFullJarRelease UP-TO-DATE
+> Task :react-native-device-info:extractProguardFiles UP-TO-DATE
+> Task :react-native-device-info:generateReleaseLintModel UP-TO-DATE
+> Task :react-native-device-info:prepareLintJarForPublish UP-TO-DATE
+> Task :react-native-encrypted-storage:bundleLibRuntimeToJarRelease UP-TO-DATE
+> Task :react-native-encrypted-storage:processReleaseJavaRes NO-SOURCE
+> Task :react-native-encrypted-storage:createFullJarRelease UP-TO-DATE
+> Task :react-native-encrypted-storage:extractProguardFiles UP-TO-DATE
+> Task :react-native-encrypted-storage:generateReleaseLintModel UP-TO-DATE
+> Task :react-native-encrypted-storage:prepareLintJarForPublish UP-TO-DATE
+> Task :react-native-get-sms-android:bundleLibRuntimeToJarRelease UP-TO-DATE
+> Task :react-native-get-sms-android:processReleaseJavaRes NO-SOURCE
+> Task :react-native-get-sms-android:createFullJarRelease UP-TO-DATE
+> Task :react-native-get-sms-android:extractProguardFiles UP-TO-DATE
+> Task :react-native-get-sms-android:generateReleaseLintModel UP-TO-DATE
+> Task :react-native-get-sms-android:prepareLintJarForPublish UP-TO-DATE
+> Task :react-native-randombytes:bundleLibRuntimeToJarRelease UP-TO-DATE
+> Task :react-native-randombytes:processReleaseJavaRes NO-SOURCE
+> Task :react-native-randombytes:createFullJarRelease UP-TO-DATE
+> Task :react-native-randombytes:extractProguardFiles UP-TO-DATE
+> Task :react-native-randombytes:generateReleaseLintModel UP-TO-DATE
+> Task :react-native-randombytes:prepareLintJarForPublish UP-TO-DATE
+> Task :react-native-vector-icons:bundleLibRuntimeToJarRelease UP-TO-DATE
+> Task :react-native-vector-icons:processReleaseJavaRes NO-SOURCE
+> Task :react-native-vector-icons:createFullJarRelease UP-TO-DATE
+> Task :react-native-vector-icons:extractProguardFiles UP-TO-DATE
+> Task :react-native-vector-icons:generateReleaseLintModel UP-TO-DATE
+> Task :react-native-vector-icons:prepareLintJarForPublish UP-TO-DATE
+> Task :react-native-webview:bundleLibRuntimeToJarRelease UP-TO-DATE
+> Task :react-native-webview:processReleaseJavaRes UP-TO-DATE
+> Task :react-native-webview:createFullJarRelease UP-TO-DATE
+> Task :react-native-webview:extractProguardFiles UP-TO-DATE
+> Task :react-native-webview:generateReleaseLintModel UP-TO-DATE
+> Task :react-native-webview:prepareLintJarForPublish UP-TO-DATE
+> Task :sentry_react-native:bundleLibRuntimeToJarRelease UP-TO-DATE
+> Task :sentry_react-native:processReleaseJavaRes NO-SOURCE
+> Task :sentry_react-native:createFullJarRelease UP-TO-DATE
+> Task :sentry_react-native:extractProguardFiles UP-TO-DATE
+> Task :sentry_react-native:generateReleaseLintModel UP-TO-DATE
+> Task :sentry_react-native:prepareLintJarForPublish UP-TO-DATE
+> Task :app:generateReleaseLintVitalReportModel
+> Task :sentry_react-native:mergeReleaseJniLibFolders UP-TO-DATE
+> Task :sentry_react-native:mergeReleaseNativeLibs NO-SOURCE
+> Task :sentry_react-native:stripReleaseDebugSymbols NO-SOURCE
+> Task :sentry_react-native:copyReleaseJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :sentry_react-native:extractDeepLinksForAarRelease UP-TO-DATE
+> Task :sentry_react-native:extractReleaseAnnotations UP-TO-DATE
+> Task :sentry_react-native:mergeReleaseGeneratedProguardFiles UP-TO-DATE
+> Task :sentry_react-native:mergeReleaseConsumerProguardFiles UP-TO-DATE
+> Task :sentry_react-native:mergeReleaseShaders UP-TO-DATE
+> Task :sentry_react-native:compileReleaseShaders NO-SOURCE
+> Task :sentry_react-native:generateReleaseAssets UP-TO-DATE
+> Task :sentry_react-native:packageReleaseAssets UP-TO-DATE
+> Task :sentry_react-native:prepareReleaseArtProfile UP-TO-DATE
+> Task :sentry_react-native:mergeReleaseJavaResource UP-TO-DATE
+> Task :sentry_react-native:syncReleaseLibJars UP-TO-DATE
+> Task :sentry_react-native:bundleReleaseLocalLintAar UP-TO-DATE
+> Task :react-native-background-actions:mergeReleaseJniLibFolders UP-TO-DATE
+> Task :react-native-background-actions:mergeReleaseNativeLibs NO-SOURCE
+> Task :react-native-background-actions:stripReleaseDebugSymbols NO-SOURCE
+> Task :react-native-background-actions:copyReleaseJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :react-native-background-actions:extractDeepLinksForAarRelease UP-TO-DATE
+> Task :react-native-background-actions:extractReleaseAnnotations UP-TO-DATE
+> Task :react-native-background-actions:mergeReleaseGeneratedProguardFiles UP-TO-DATE
+> Task :react-native-background-actions:mergeReleaseConsumerProguardFiles UP-TO-DATE
+> Task :react-native-background-actions:mergeReleaseShaders UP-TO-DATE
+> Task :react-native-background-actions:compileReleaseShaders NO-SOURCE
+> Task :react-native-background-actions:generateReleaseAssets UP-TO-DATE
+> Task :react-native-background-actions:packageReleaseAssets UP-TO-DATE
+> Task :react-native-background-actions:prepareReleaseArtProfile UP-TO-DATE
+> Task :react-native-background-actions:mergeReleaseJavaResource UP-TO-DATE
+> Task :react-native-background-actions:syncReleaseLibJars UP-TO-DATE
+> Task :react-native-background-actions:bundleReleaseLocalLintAar UP-TO-DATE
+> Task :react-native-device-info:mergeReleaseJniLibFolders UP-TO-DATE
+> Task :react-native-device-info:mergeReleaseNativeLibs NO-SOURCE
+> Task :react-native-device-info:stripReleaseDebugSymbols NO-SOURCE
+> Task :react-native-device-info:copyReleaseJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :react-native-device-info:extractDeepLinksForAarRelease UP-TO-DATE
+> Task :react-native-device-info:extractReleaseAnnotations UP-TO-DATE
+> Task :react-native-device-info:mergeReleaseGeneratedProguardFiles UP-TO-DATE
+> Task :react-native-device-info:mergeReleaseConsumerProguardFiles UP-TO-DATE
+> Task :react-native-device-info:mergeReleaseShaders UP-TO-DATE
+> Task :react-native-device-info:compileReleaseShaders NO-SOURCE
+> Task :react-native-device-info:generateReleaseAssets UP-TO-DATE
+> Task :react-native-device-info:packageReleaseAssets UP-TO-DATE
+> Task :react-native-device-info:prepareReleaseArtProfile UP-TO-DATE
+> Task :react-native-device-info:mergeReleaseJavaResource UP-TO-DATE
+> Task :react-native-device-info:syncReleaseLibJars UP-TO-DATE
+> Task :react-native-device-info:bundleReleaseLocalLintAar UP-TO-DATE
+> Task :react-native-encrypted-storage:mergeReleaseJniLibFolders UP-TO-DATE
+> Task :react-native-encrypted-storage:mergeReleaseNativeLibs NO-SOURCE
+> Task :react-native-encrypted-storage:stripReleaseDebugSymbols NO-SOURCE
+> Task :react-native-encrypted-storage:copyReleaseJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :react-native-encrypted-storage:extractDeepLinksForAarRelease UP-TO-DATE
+> Task :react-native-encrypted-storage:extractReleaseAnnotations UP-TO-DATE
+> Task :react-native-encrypted-storage:mergeReleaseGeneratedProguardFiles UP-TO-DATE
+> Task :react-native-encrypted-storage:mergeReleaseConsumerProguardFiles UP-TO-DATE
+> Task :react-native-encrypted-storage:mergeReleaseShaders UP-TO-DATE
+> Task :react-native-encrypted-storage:compileReleaseShaders NO-SOURCE
+> Task :react-native-encrypted-storage:generateReleaseAssets UP-TO-DATE
+> Task :react-native-encrypted-storage:packageReleaseAssets UP-TO-DATE
+> Task :react-native-encrypted-storage:prepareReleaseArtProfile UP-TO-DATE
+> Task :react-native-encrypted-storage:mergeReleaseJavaResource UP-TO-DATE
+> Task :react-native-encrypted-storage:syncReleaseLibJars UP-TO-DATE
+> Task :react-native-encrypted-storage:bundleReleaseLocalLintAar UP-TO-DATE
+> Task :react-native-randombytes:mergeReleaseJniLibFolders UP-TO-DATE
+> Task :react-native-randombytes:mergeReleaseNativeLibs NO-SOURCE
+> Task :react-native-randombytes:stripReleaseDebugSymbols NO-SOURCE
+> Task :react-native-randombytes:copyReleaseJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :react-native-randombytes:extractDeepLinksForAarRelease UP-TO-DATE
+> Task :react-native-randombytes:extractReleaseAnnotations UP-TO-DATE
+> Task :react-native-randombytes:mergeReleaseGeneratedProguardFiles UP-TO-DATE
+> Task :react-native-randombytes:mergeReleaseConsumerProguardFiles UP-TO-DATE
+> Task :react-native-randombytes:mergeReleaseShaders UP-TO-DATE
+> Task :react-native-randombytes:compileReleaseShaders NO-SOURCE
+> Task :react-native-randombytes:generateReleaseAssets UP-TO-DATE
+> Task :react-native-randombytes:packageReleaseAssets UP-TO-DATE
+> Task :react-native-randombytes:prepareReleaseArtProfile UP-TO-DATE
+> Task :react-native-randombytes:mergeReleaseJavaResource UP-TO-DATE
+> Task :react-native-randombytes:syncReleaseLibJars UP-TO-DATE
+> Task :react-native-randombytes:bundleReleaseLocalLintAar UP-TO-DATE
+> Task :react-native-vector-icons:mergeReleaseJniLibFolders UP-TO-DATE
+> Task :react-native-vector-icons:mergeReleaseNativeLibs NO-SOURCE
+> Task :react-native-vector-icons:stripReleaseDebugSymbols NO-SOURCE
+> Task :react-native-vector-icons:copyReleaseJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :react-native-vector-icons:extractDeepLinksForAarRelease UP-TO-DATE
+> Task :react-native-vector-icons:extractReleaseAnnotations UP-TO-DATE
+> Task :react-native-vector-icons:mergeReleaseGeneratedProguardFiles UP-TO-DATE
+> Task :react-native-vector-icons:mergeReleaseConsumerProguardFiles UP-TO-DATE
+> Task :react-native-vector-icons:mergeReleaseShaders UP-TO-DATE
+> Task :react-native-vector-icons:compileReleaseShaders NO-SOURCE
+> Task :react-native-vector-icons:generateReleaseAssets UP-TO-DATE
+> Task :react-native-vector-icons:packageReleaseAssets UP-TO-DATE
+> Task :react-native-vector-icons:prepareReleaseArtProfile UP-TO-DATE
+> Task :react-native-vector-icons:mergeReleaseJavaResource UP-TO-DATE
+> Task :react-native-vector-icons:syncReleaseLibJars UP-TO-DATE
+> Task :react-native-vector-icons:bundleReleaseLocalLintAar UP-TO-DATE
+> Task :react-native-webview:mergeReleaseJniLibFolders UP-TO-DATE
+> Task :react-native-webview:mergeReleaseNativeLibs NO-SOURCE
+> Task :react-native-webview:stripReleaseDebugSymbols NO-SOURCE
+> Task :react-native-webview:copyReleaseJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :react-native-webview:extractDeepLinksForAarRelease UP-TO-DATE
+> Task :react-native-webview:extractReleaseAnnotations UP-TO-DATE
+> Task :react-native-webview:mergeReleaseGeneratedProguardFiles UP-TO-DATE
+> Task :react-native-webview:mergeReleaseConsumerProguardFiles UP-TO-DATE
+> Task :react-native-webview:mergeReleaseShaders UP-TO-DATE
+> Task :react-native-webview:compileReleaseShaders NO-SOURCE
+> Task :react-native-webview:generateReleaseAssets UP-TO-DATE
+> Task :react-native-webview:packageReleaseAssets UP-TO-DATE
+> Task :react-native-webview:prepareReleaseArtProfile UP-TO-DATE
+> Task :react-native-webview:mergeReleaseJavaResource UP-TO-DATE
+> Task :react-native-webview:syncReleaseLibJars UP-TO-DATE
+> Task :react-native-webview:bundleReleaseLocalLintAar UP-TO-DATE
+> Task :react-native-get-sms-android:mergeReleaseJniLibFolders UP-TO-DATE
+> Task :react-native-get-sms-android:mergeReleaseNativeLibs NO-SOURCE
+> Task :react-native-get-sms-android:stripReleaseDebugSymbols NO-SOURCE
+> Task :react-native-get-sms-android:copyReleaseJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :react-native-get-sms-android:extractDeepLinksForAarRelease UP-TO-DATE
+> Task :react-native-get-sms-android:extractReleaseAnnotations UP-TO-DATE
+> Task :react-native-get-sms-android:mergeReleaseGeneratedProguardFiles UP-TO-DATE
+> Task :react-native-get-sms-android:mergeReleaseConsumerProguardFiles UP-TO-DATE
+> Task :react-native-get-sms-android:mergeReleaseShaders UP-TO-DATE
+> Task :react-native-get-sms-android:compileReleaseShaders NO-SOURCE
+> Task :react-native-get-sms-android:generateReleaseAssets UP-TO-DATE
+> Task :react-native-get-sms-android:packageReleaseAssets UP-TO-DATE
+> Task :react-native-get-sms-android:prepareReleaseArtProfile UP-TO-DATE
+> Task :react-native-get-sms-android:mergeReleaseJavaResource UP-TO-DATE
+> Task :react-native-get-sms-android:syncReleaseLibJars UP-TO-DATE
+> Task :react-native-get-sms-android:bundleReleaseLocalLintAar UP-TO-DATE
+> Task :react-native-background-actions:lintVitalAnalyzeRelease UP-TO-DATE
+> Task :react-native-background-actions:writeReleaseLintModelMetadata UP-TO-DATE
+> Task :react-native-device-info:lintVitalAnalyzeRelease UP-TO-DATE
+> Task :react-native-device-info:writeReleaseLintModelMetadata UP-TO-DATE
+> Task :react-native-encrypted-storage:lintVitalAnalyzeRelease UP-TO-DATE
+> Task :react-native-encrypted-storage:writeReleaseLintModelMetadata UP-TO-DATE
+> Task :react-native-get-sms-android:lintVitalAnalyzeRelease UP-TO-DATE
+> Task :react-native-get-sms-android:writeReleaseLintModelMetadata UP-TO-DATE
+> Task :react-native-randombytes:lintVitalAnalyzeRelease UP-TO-DATE
+> Task :react-native-randombytes:writeReleaseLintModelMetadata UP-TO-DATE
+> Task :react-native-vector-icons:lintVitalAnalyzeRelease UP-TO-DATE
+> Task :react-native-vector-icons:writeReleaseLintModelMetadata UP-TO-DATE
+> Task :react-native-webview:lintVitalAnalyzeRelease UP-TO-DATE
+> Task :react-native-webview:writeReleaseLintModelMetadata UP-TO-DATE
+> Task :sentry_react-native:lintVitalAnalyzeRelease UP-TO-DATE
+> Task :sentry_react-native:writeReleaseLintModelMetadata UP-TO-DATE
+> Task :react-native-background-actions:generateReleaseLintVitalModel UP-TO-DATE
+> Task :react-native-device-info:generateReleaseLintVitalModel UP-TO-DATE
+> Task :react-native-encrypted-storage:generateReleaseLintVitalModel UP-TO-DATE
+> Task :react-native-get-sms-android:generateReleaseLintVitalModel UP-TO-DATE
+> Task :react-native-randombytes:generateReleaseLintVitalModel UP-TO-DATE
+> Task :react-native-vector-icons:generateReleaseLintVitalModel UP-TO-DATE
+> Task :react-native-webview:generateReleaseLintVitalModel UP-TO-DATE
+> Task :sentry_react-native:generateReleaseLintVitalModel UP-TO-DATE
+> Task :app:mergeReleaseJniLibFolders UP-TO-DATE
+> Task :react-native-background-actions:copyReleaseJniLibsProjectOnly UP-TO-DATE
+> Task :react-native-device-info:copyReleaseJniLibsProjectOnly UP-TO-DATE
+> Task :react-native-encrypted-storage:copyReleaseJniLibsProjectOnly UP-TO-DATE
+> Task :react-native-get-sms-android:copyReleaseJniLibsProjectOnly UP-TO-DATE
+> Task :react-native-randombytes:copyReleaseJniLibsProjectOnly UP-TO-DATE
+> Task :react-native-vector-icons:copyReleaseJniLibsProjectOnly UP-TO-DATE
+> Task :react-native-webview:copyReleaseJniLibsProjectOnly UP-TO-DATE
+> Task :sentry_react-native:copyReleaseJniLibsProjectOnly UP-TO-DATE
+> Task :app:mergeReleaseNativeLibs UP-TO-DATE
+> Task :app:stripReleaseDebugSymbols UP-TO-DATE
+> Task :app:extractReleaseNativeSymbolTables UP-TO-DATE
+> Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
+> Task :sentry_react-native:exportReleaseConsumerProguardFiles UP-TO-DATE
+> Task :react-native-background-actions:exportReleaseConsumerProguardFiles UP-TO-DATE
+> Task :react-native-device-info:exportReleaseConsumerProguardFiles UP-TO-DATE
+> Task :react-native-encrypted-storage:exportReleaseConsumerProguardFiles UP-TO-DATE
+> Task :react-native-randombytes:exportReleaseConsumerProguardFiles UP-TO-DATE
+> Task :react-native-vector-icons:exportReleaseConsumerProguardFiles UP-TO-DATE
+> Task :react-native-webview:exportReleaseConsumerProguardFiles UP-TO-DATE
+> Task :react-native-get-sms-android:exportReleaseConsumerProguardFiles UP-TO-DATE
+> Task :app:checkReleaseDuplicateClasses UP-TO-DATE
+> Task :app:mergeReleaseArtProfile UP-TO-DATE
+> Task :app:expandReleaseArtProfileWildcards UP-TO-DATE
+> Task :app:mergeReleaseGeneratedProguardFiles UP-TO-DATE
+> Task :app:processReleaseJavaRes NO-SOURCE
+> Task :app:mergeReleaseJavaResource UP-TO-DATE
+> Task :app:mergeReleaseShaders UP-TO-DATE
+> Task :app:compileReleaseShaders NO-SOURCE
+> Task :app:generateReleaseAssets UP-TO-DATE
+> Task :app:mergeReleaseAssets UP-TO-DATE
+> Task :app:compressReleaseAssets UP-TO-DATE
+> Task :app:extractReleaseVersionControlInfo UP-TO-DATE
+> Task :app:optimizeReleaseResources UP-TO-DATE
+> Task :app:collectReleaseDependencies UP-TO-DATE
+> Task :app:sdkReleaseDependencyData UP-TO-DATE
+> Task :app:validateSigningRelease UP-TO-DATE
+> Task :app:writeReleaseAppMetadata UP-TO-DATE
+> Task :app:writeReleaseSigningConfigVersions UP-TO-DATE
+> Task :react-native-background-actions:bundleReleaseAar UP-TO-DATE
+> Task :react-native-background-actions:mapReleaseSourceSetPaths UP-TO-DATE
+> Task :react-native-background-actions:mergeReleaseResources UP-TO-DATE
+> Task :react-native-background-actions:verifyReleaseResources UP-TO-DATE
+> Task :react-native-background-actions:assembleRelease UP-TO-DATE
+> Task :react-native-device-info:bundleReleaseAar UP-TO-DATE
+> Task :react-native-device-info:mapReleaseSourceSetPaths UP-TO-DATE
+> Task :react-native-device-info:mergeReleaseResources UP-TO-DATE
+> Task :react-native-device-info:verifyReleaseResources UP-TO-DATE
+> Task :react-native-device-info:assembleRelease UP-TO-DATE
+> Task :react-native-encrypted-storage:bundleReleaseAar UP-TO-DATE
+> Task :react-native-encrypted-storage:mapReleaseSourceSetPaths UP-TO-DATE
+> Task :react-native-encrypted-storage:mergeReleaseResources UP-TO-DATE
+> Task :react-native-encrypted-storage:verifyReleaseResources UP-TO-DATE
+> Task :react-native-encrypted-storage:assembleRelease UP-TO-DATE
+> Task :react-native-get-sms-android:bundleReleaseAar
+> Task :react-native-get-sms-android:mapReleaseSourceSetPaths
+> Task :react-native-get-sms-android:mergeReleaseResources
+> Task :react-native-randombytes:bundleReleaseAar
+> Task :react-native-randombytes:mapReleaseSourceSetPaths
+> Task :app:lintVitalAnalyzeRelease
+> Task :react-native-get-sms-android:verifyReleaseResources
+> Task :react-native-randombytes:mergeReleaseResources
+> Task :app:lintVitalReportRelease UP-TO-DATE
+> Task :app:lintVitalRelease
+> Task :react-native-get-sms-android:assembleRelease
+> Task :react-native-vector-icons:bundleReleaseAar
+> Task :react-native-vector-icons:mapReleaseSourceSetPaths
+> Task :react-native-vector-icons:mergeReleaseResources
+> Task :react-native-webview:bundleReleaseAar
+> Task :react-native-webview:mapReleaseSourceSetPaths
+> Task :react-native-randombytes:verifyReleaseResources
+> Task :react-native-webview:mergeReleaseResources
+> Task :react-native-randombytes:assembleRelease
+> Task :sentry_react-native:bundleReleaseAar
+> Task :sentry_react-native:mapReleaseSourceSetPaths
+> Task :react-native-vector-icons:verifyReleaseResources
+> Task :app:minifyReleaseWithR8
+> Task :react-native-webview:verifyReleaseResources
+> Task :sentry_react-native:mergeReleaseResources
+> Task :react-native-vector-icons:assembleRelease
+> Task :react-native-webview:assembleRelease
+> Task :app:compileReleaseArtProfile
+> Task :app:packageRelease
+> Task :app:createReleaseApkListingFileRedirect
+> Task :app:assembleRelease
+> Task :sentry_react-native:verifyReleaseResources
+> Task :sentry_react-native:assembleRelease
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.5/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 56s
+365 actionable tasks: 30 executed, 335 up-to-date

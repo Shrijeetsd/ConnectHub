@@ -1,0 +1,5 @@
+Starting a Gradle Daemon, 8 stopped Daemons could not be reused, use --status for details
+> Task :app:clean
+
+BUILD SUCCESSFUL in 11s
+1 actionable task: 1 executed

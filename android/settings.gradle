@@ -1,0 +1,18 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {3
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+// तुमच्या ॲपच्या नवीन नावाप्रमाणे (Connect Hub) बदलले आहे
+rootProject.name = "Connect Hub"
+include ':app'
