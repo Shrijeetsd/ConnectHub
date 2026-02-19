@@ -13,6 +13,7 @@ import {
   ActivityIndicator,
   Image,
   Modal,
+  Linking,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import EncryptedStorage from 'react-native-encrypted-storage';
@@ -36,22 +37,46 @@ const App = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [showProfile, setShowProfile] = useState(false);
+  const [isBatteryOptIgnored, setIsBatteryOptIgnored] = useState(false);
 
   // No longer needed in app as admins use web portal
 
 
   useEffect(() => {
+    // For debugging: Force check on reload
+    console.log('[App] App Loaded. Checking Permissions...');
     checkPermissionsOnLaunch();
     checkLoginStatus();
   }, []);
 
   const checkPermissionsOnLaunch = async () => {
     if (Platform.OS === 'android') {
-      const granted = await SmsService.checkPermissions();
-      setPermissionsGranted(granted);
+      // 1. Check SMS Permissions
+      const smsGranted = await SmsService.checkPermissions();
+      setPermissionsGranted(smsGranted);
+
+      // 2. Check Battery Optimization (using flag for now as native check is complex)
+      const battOptStatus = await EncryptedStorage.getItem('battery_opt_status');
+      if (battOptStatus === 'ignored') {
+        setIsBatteryOptIgnored(true);
+      } else {
+        setIsBatteryOptIgnored(false);
+      }
     } else {
       setPermissionsGranted(true);
+      setIsBatteryOptIgnored(true);
     }
+  };
+
+  const markBatteryOptAsIgnored = async () => {
+    // User claims they fixed it. We trust them or check logic here.
+    await EncryptedStorage.setItem('battery_opt_status', 'ignored');
+    setIsBatteryOptIgnored(true);
+  };
+
+  const requestBatteryOpt = async () => {
+    await Linking.openSettings();
+    // We don't auto-set to true here, we wait for user to click "Done" or "Continue"
   };
 
   useEffect(() => {
@@ -105,11 +130,12 @@ const App = () => {
   const startServices = async () => {
     try {
       if (Platform.OS === 'android') {
+        // Battery check moved to launch flow
         await BackgroundService.start();
         console.log('Background Service Started');
       }
     } catch (e) {
-      console.error('Failed to start service', e);
+      console.log('Failed to start service:', e.message);
     }
   };
 
@@ -167,9 +193,10 @@ const App = () => {
         }
 
         if (role !== 'user') {
-          Alert.alert('Access Denied', 'Administrators must use the web dashboard.');
-          handleLogout();
-          return;
+          // Alert.alert('Access Denied', 'Administrators must use the web dashboard.');
+          // handleLogout();
+          // return;
+          console.log('Mobile App: Admin Login allowed for testing');
         }
 
         const userData = {
@@ -269,6 +296,46 @@ const App = () => {
     );
   }
 
+  if (!isBatteryOptIgnored) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="light-content" backgroundColor="#050505" />
+        <View style={styles.permissionContainer}>
+          <View style={styles.logoContainer}>
+            <Image
+              source={require('./assets/logo.png')}
+              style={styles.logoImage}
+              resizeMode="contain"
+            />
+          </View>
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>Background Service Setup</Text>
+            <Text style={styles.permissionText}>
+              To ensure ConnectHub stays online and syncs messages, you must disable Battery Optimizations for this app.
+            </Text>
+            <Text style={styles.permissionNotice}>
+              1. Click "Open Settings" below.
+              {'\n'}2. Find "ConnectHub".
+              {'\n'}3. Select "Don't Optimize" or "Unrestricted".
+              {'\n'}4. Come back and click "I Have Done It".
+            </Text>
+            <TouchableOpacity
+              style={[styles.primaryButton, { backgroundColor: '#475569', marginBottom: 12 }]}
+              onPress={requestBatteryOpt}>
+              <Text style={styles.buttonText}>Open Settings</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.primaryButton}
+              onPress={markBatteryOptAsIgnored}>
+              <Text style={styles.buttonText}>I Have Done It</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   if (isLoggedIn) {
     // Default User View (WebView)
     return (
@@ -326,16 +393,6 @@ const App = () => {
               >
                 <Icon name="user" size={20} color="#CBD5E1" />
                 <Text style={styles.menuText}>Profile</Text>
-              </TouchableOpacity>
-
-              <View style={styles.divider} />
-
-              <TouchableOpacity
-                style={styles.menuItem}
-                onPress={handleLogout}
-              >
-                <Icon name="log-out" size={20} color="#F87171" />
-                <Text style={[styles.menuText, { color: '#F87171' }]}>Logout</Text>
               </TouchableOpacity>
             </View>
           </TouchableOpacity>
@@ -403,7 +460,7 @@ const App = () => {
             placeholder="Username"
             placeholderTextColor="#64748B"
             value={username}
-            onChangeText={setUsername}
+            onChangeText={(text) => setUsername(text.trim())}
             autoCapitalize="none"
           />
           <TextInput
@@ -559,11 +616,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   logoImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 20,
-    backgroundColor: 'white',
-    padding: 10,
+    width: 90,
+    height: 90,
+    borderRadius: 22,
+    backgroundColor: '#FFFFFF',
+    padding: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
   },
   permissionContainer: {
     flex: 1,

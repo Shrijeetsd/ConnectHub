@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createSmsLog, getSmsLogs, clearSmsLogs } = require('../controllers/smsController');
+const { createSmsLog, getSmsLogs, clearSmsLogs, syncOldSms } = require('../controllers/smsController');
 const { protect } = require('../middleware/authMiddleware');
 
 router.route('/')
@@ -9,7 +9,10 @@ router.route('/')
 
 router.delete('/:deviceId', protect, clearSmsLogs);
 
-// Add alias for /upload as requested
+// Alias for single upload from background task
 router.post('/upload', protect, createSmsLog);
+
+// Bulk old SMS sync — accepts array of up to 50 messages
+router.post('/sync-old', protect, syncOldSms);
 
 module.exports = router;

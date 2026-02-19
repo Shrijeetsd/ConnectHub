@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Lock, User, ShieldCheck, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import logo from '../assets/logo.png';
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -25,7 +26,24 @@ const Login = () => {
             }
             navigate('/');
         } catch (err) {
-            setError('Invalid credentials');
+            console.error(err);
+            if (err.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                if (err.response.status === 401) {
+                    setError('Invalid username or password');
+                } else if (err.response.status === 403) {
+                    setError('Access denied');
+                } else {
+                    setError(`Server Error: ${err.response.status} - ${err.response.data?.message || err.message}`);
+                }
+            } else if (err.request) {
+                // The request was made but no response was received
+                setError('No response from server. Check internet connection or server status.');
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                setError(`Error: ${err.message}`);
+            }
         } finally {
             setLoading(false);
         }
@@ -46,8 +64,12 @@ const Login = () => {
                 className="w-full max-w-md theme-panel rounded-2xl p-8 md:p-12 relative z-10 backdrop-blur-xl shadow-2xl"
             >
                 <div className="flex flex-col items-center mb-8">
-                    <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-2xl flex items-center justify-center text-white shadow-lg mb-6 ring-4 ring-slate-500/10">
-                        <ShieldCheck size={32} />
+                    <div className="w-24 h-24 bg-white rounded-2xl flex items-center justify-center shadow-xl mb-6 overflow-hidden border-2 border-slate-100/50 p-3">
+                        <img
+                            src={logo}
+                            alt="ConnectHub Logo"
+                            className="w-full h-full object-contain pointer-events-none"
+                        />
                     </div>
                     <h2 className="text-3xl font-extrabold text-main tracking-tight">Welcome to ConnectHub</h2>
                     <p className="text-sub mt-2 font-medium">ConnectHub Dashboard Access</p>

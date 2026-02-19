@@ -4,9 +4,45 @@ import BentoCard from '../components/BentoCard';
 import { Smartphone, MessageSquare, Activity, Server, Cpu } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
+import api from '../api/axios';
 
 const Overview = () => {
-    const { smsLogs, devices } = useData();
+    const { smsLogs, devices, refreshData } = useData();
+    const [currentLatency, setCurrentLatency] = React.useState(null);
+
+    const handleDiagnostics = async () => {
+        const toastId = toast.loading("Running System Diagnostics...");
+        const start = Date.now();
+        try {
+            // Ping the backend
+            await api.get('/ping');
+            const latency = Date.now() - start;
+            setCurrentLatency(latency);
+
+            // Simple health check logic
+            let status = "Stable";
+            let description = "All systems operational.";
+
+            if (latency > 500) {
+                status = "Degraded";
+                description = "High latency detected.";
+            }
+
+            toast.success(`Diagnostic Complete: System ${status}`, {
+                id: toastId,
+                description: `Latency: ${latency}ms | ${description}`,
+                duration: 4000
+            });
+
+            // Also refresh global data
+            refreshData();
+        } catch (error) {
+            toast.error("Diagnostic Failed", {
+                id: toastId,
+                description: "Backend communication interrupted.",
+            });
+        }
+    };
 
     return (
         <motion.div
@@ -43,7 +79,7 @@ const Overview = () => {
             />
             <BentoCard
                 title="Server Latency"
-                value="24ms"
+                value={currentLatency !== null ? `${currentLatency}ms` : "---"}
                 icon={Server}
                 color="violet"
                 size="md"
@@ -58,10 +94,7 @@ const Overview = () => {
                     </div>
                 </div>
                 <button
-                    onClick={() => {
-                        refreshData();
-                        toast.info("System Check: Data Refreshed");
-                    }}
+                    onClick={handleDiagnostics}
                     className="px-6 py-2 bg-slate-500/10 rounded-lg text-sm font-bold text-main hover:bg-slate-500/20 transition-colors"
                 >
                     Run Diagnostics

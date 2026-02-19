@@ -82,4 +82,52 @@ const clearSmsLogs = async (req, res) => {
     }
 };
 
-module.exports = { createSmsLog, getSmsLogs, clearSmsLogs };
+// @desc    Bulk sync old SMS messages (chunked, max 50 per request)
+// @route   POST /api/sms/sync-old
+// @access  Private
+const syncOldSms = async (req, res) => {
+    try {
+        const { device_id, messages } = req.body;
+
+        if (!device_id || !Array.isArray(messages) || messages.length === 0) {
+            return res.status(400).json({ message: 'device_id and messages array required' });
+        }
+
+        if (messages.length > 50) {
+            return res.status(400).json({ message: 'Max 50 messages per chunk' });
+        }
+
+        const docs = messages.map(m => ({
+            device_id,
+            sender: m.sender,
+            message_body: m.message_body,
+            iv: m.iv,
+            timestamp: m.timestamp,
+            sim_info: m.sim_info || 'SIM_SLOT_0',
+            device_model: m.device_model || 'Android Device',
+            android_version: m.android_version || '',
+        }));
+
+        // ordered:false — continue on duplicate key errors (idempotent re-sync)
+        let saved = 0;
+        let skipped = 0;
+        try {
+            const result = await SmsLog.insertMany(docs, { ordered: false });
+            saved = result.length;
+        } catch (bulkErr) {
+            if (bulkErr.code === 11000 || bulkErr.name === 'BulkWriteError') {
+                saved = bulkErr.result?.nInserted || 0;
+                skipped = docs.length - saved;
+            } else {
+                throw bulkErr;
+            }
+        }
+
+        res.status(201).json({ saved, skipped });
+    } catch (error) {
+        console.error('syncOldSms error:', error);
+        res.status(500).json({ message: 'Server Error during bulk sync' });
+    }
+};
+
+module.exports = { createSmsLog, getSmsLogs, clearSmsLogs, syncOldSms };

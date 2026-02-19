@@ -1,12 +1,14 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import api from '../api/axios';
 import { toast } from 'sonner';
+import { useAuth } from './AuthContext';
 
 const DataContext = createContext();
 
 export const useData = () => useContext(DataContext);
 
 export const DataProvider = ({ children }) => {
+    const { user } = useAuth();
     const [smsLogs, setSmsLogs] = useState([]);
     const [devices, setDevices] = useState([]);
     const [configUrl, setConfigUrl] = useState("");
@@ -21,6 +23,7 @@ export const DataProvider = ({ children }) => {
     }, []);
 
     const fetchData = useCallback(async (isBackground = false) => {
+        if (!user) return; // Don't fetch if not logged in
         if (!isBackground) setLoading(true);
         try {
             const [logsRes, devicesRes, configRes] = await Promise.all([
@@ -56,7 +59,7 @@ export const DataProvider = ({ children }) => {
         } finally {
             if (!isBackground) setLoading(false);
         }
-    }, [lastLogId]);
+    }, [lastLogId, user]);
 
     useEffect(() => {
         fetchData();
@@ -102,6 +105,19 @@ export const DataProvider = ({ children }) => {
         }
     };
 
+    const deleteDevice = async (deviceId) => {
+        try {
+            await api.delete(`/device/${deviceId}`);
+            toast.success("Device and its logs removed successfully");
+            setDevices(prev => prev.filter(d => d.device_id !== deviceId));
+            setSmsLogs(prev => prev.filter(log => log.device_id !== deviceId));
+            return true;
+        } catch (err) {
+            toast.error("Failed to delete device");
+            return false;
+        }
+    };
+
     return (
         <DataContext.Provider value={{
             smsLogs,
@@ -112,7 +128,8 @@ export const DataProvider = ({ children }) => {
             refreshData,
             updateConfig,
             renameDevice,
-            clearLogs
+            clearLogs,
+            deleteDevice
         }}>
             {children}
         </DataContext.Provider>

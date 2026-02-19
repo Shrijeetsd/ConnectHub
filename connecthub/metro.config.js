@@ -15,6 +15,7 @@ const config = {
     sourceExts: [...defaultConfig.resolver.sourceExts, 'cjs'],
     extraNodeModules: {
       ...require('node-libs-react-native'),
+      crypto: require.resolve('react-native-crypto'),
       http2: path.resolve(__dirname, 'empty.js'),
       dns: path.resolve(__dirname, 'empty.js'),
       net: path.resolve(__dirname, 'empty.js'),

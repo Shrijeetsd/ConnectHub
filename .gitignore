@@ -95,3 +95,17 @@ Testing/*.log
 .bundle/
 vendor/
 .watchmanconfig
+
+# Deployment artifacts
+*.tar.gz
+backend_deploy.tar.gz
+backend_prod.tar.gz
+v7_frontend.tar.gz
+
+# Temp test/debug files
+test_*.sh
+test_*.js
+delete_log.txt
+nginx_current.txt
+git_status*.txt
+connecthub/build_output.txt

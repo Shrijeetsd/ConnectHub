@@ -44,13 +44,21 @@ tar -xzf /root/backend_deploy.tar.gz -C /var/www/connecthub-backend/
 cd /var/www/connecthub-backend
 npm install --production --silent
 
-# Create .env if missing
-if [ ! -f .env ]; then
-    printf "NODE_ENV=production\nPORT=5000\nMONGO_URI=mongodb+srv://shrijitdesai8459_db_user:8YW4iRNIuS4c4fms@cluster0.5rtomco.mongodb.net/sms_receiver_production?appName=Cluster0\nJWT_SECRET=63786191d61b7db98174b43a0892ff17cccad55aa84d8\nREGISTRATION_SECRET=5528bdcaa4b0b8289ed8e4f69333b99fb\nFRONTEND_URL=http://vansh.com\nALLOWED_ORIGINS=http://vansh.com,http://116.203.28.131\n" > .env
-fi
+    # Create .env (Safely quoted via escaped single quotes)
+    echo "NODE_ENV=production" > .env
+    echo "PORT=5000" >> .env
+    echo ''MONGO_URI=mongodb+srv://shrijitdesai8459_db_user:8YW4iRNIuS4c4fms@cluster0.5rtomco.mongodb.net/sms_receiver_production?appName=Cluster0'' >> .env
+    echo "JWT_SECRET=super-secure-connecthub-production-key-2026" >> .env
+    echo "REGISTRATION_SECRET=5528bdcaa4b0b8289ed8e4f69333b99fb" >> .env
+    echo "FRONTEND_URL=http://vansh.com" >> .env
+    echo "ALLOWED_ORIGINS=http://vansh.com,http://116.203.28.131" >> .env
 
 # Seed
 [ -f "seed.js" ] && node seed.js || echo "seed.js missing"
+
+# Cleanup potentially conflicting processes
+pm2 delete connecthub-api || true
+pm2 delete connecthub-backend || true
 
 pm2 start server.js --name connecthub-api
 pm2 save

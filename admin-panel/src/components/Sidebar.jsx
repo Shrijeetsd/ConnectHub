@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import {
     LayoutDashboard, Smartphone, Settings, Zap, Users
 } from 'lucide-react';
+import logo from '../assets/logo.png';
 
 const Sidebar = () => {
 
@@ -17,9 +18,13 @@ const Sidebar = () => {
         <aside className="w-20 lg:w-64 border-r flex flex-col z-20 relative theme-panel transition-all shadow-xl h-full">
             {/* Logo Section */}
             <div className="h-24 flex items-center justify-center lg:justify-start lg:px-8 border-b border-theme/50 theme-panel-solid">
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-white shadow-lg shrink-0 overflow-hidden border border-theme/20">
-                    <img src="/logo.png" alt="Logo" className="w-9 h-9 object-contain" />
-                </div>
+                <img
+                    src={logo}
+                    alt="ConnectHub Logo"
+                    width={48}
+                    height={48}
+                    style={{ width: 48, height: 48, borderRadius: 12, display: 'block', flexShrink: 0, objectFit: 'cover' }}
+                />
 
                 <div className="hidden lg:block ml-4">
                     <h1 className="font-bold text-lg text-main tracking-tight leading-none">ConnectHub</h1>

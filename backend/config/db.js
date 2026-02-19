@@ -10,6 +10,13 @@ const connectDB = async () => {
         });
 
         console.log(`MongoDB Connected: ${conn.connection.host}`);
+        console.log(`Database Name: ${conn.connection.name}`);
+
+        // Mask the URI to safely log it
+        const maskedURI = process.env.MONGO_URI
+            ? process.env.MONGO_URI.replace(/:([^:@]{1,})@/, ':****@')
+            : 'UNDEFINED';
+        console.log(`Connection URI: ${maskedURI}`);
 
         mongoose.connection.on('error', err => {
             console.error(`MongoDB runtime error: ${err}`);

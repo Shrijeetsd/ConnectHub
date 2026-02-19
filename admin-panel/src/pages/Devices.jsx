@@ -2,8 +2,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useData } from '../context/DataContext';
 import RealisticPhone from '../components/RealisticPhone';
 import { decryptMessage } from '../utils/crypto';
+import api from '../api/axios';
 import {
-    Download, Trash2, MessageSquare, Eye, EyeOff, Check, Copy, ChevronLeft, ChevronRight, Smartphone
+    Download, Trash2, MessageSquare, Eye, EyeOff, Check, Copy, ChevronLeft, ChevronRight, Smartphone, RefreshCcw
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
@@ -11,7 +12,7 @@ import { toast } from 'sonner';
 const LOGS_PER_PAGE = 8;
 
 const Devices = () => {
-    const { devices, smsLogs, renameDevice, clearLogs, refreshData, loading } = useData();
+    const { devices, smsLogs, renameDevice, clearLogs, deleteDevice, refreshData, loading } = useData();
     const [selectedDevice, setSelectedDevice] = useState(null);
     const [search, setSearch] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
@@ -100,6 +101,28 @@ const Devices = () => {
     const handleClearLogsWrapper = () => {
         if (!selectedDevice || !window.confirm(`Are you sure you want to DELETE ALL logs for this device?`)) return;
         clearLogs(selectedDevice.device_id);
+    };
+
+    const handleDeleteDeviceWrapper = async () => {
+        if (!selectedDevice || !window.confirm(`PERMANENTLY DELETE current device and all its records?`)) return;
+        const success = await deleteDevice(selectedDevice.device_id);
+        if (success) {
+            setSelectedDevice(null);
+        }
+    };
+
+    const handleSyncOldMessages = async () => {
+        if (!selectedDevice) return;
+        const toastId = toast.loading('Queuing sync request...');
+        try {
+            await api.post(`/device/request-sync/${selectedDevice.device_id}`);
+            toast.success('Sync request sent! Device will re-upload old messages on next heartbeat (~2 min).', {
+                id: toastId,
+                duration: 5000,
+            });
+        } catch (err) {
+            toast.error('Failed to send sync request.', { id: toastId });
+        }
     };
 
     const getDeviceDisplayName = (device) => {
@@ -193,8 +216,19 @@ const Devices = () => {
                                 <button onClick={handleExportCSV} className="btn-icon w-8 h-8 rounded-lg text-theme hover:bg-theme/10" title="Export CSV">
                                     <Download size={16} />
                                 </button>
-                                <button onClick={handleClearLogsWrapper} className="btn-icon w-8 h-8 rounded-lg text-rose-500 hover:bg-rose-500/10" title="Clear All Logs">
+                                <button
+                                    onClick={handleSyncOldMessages}
+                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 hover:bg-indigo-500/20 hover:text-indigo-300 transition-all text-xs font-bold"
+                                    title="Request device to re-upload old messages"
+                                >
+                                    <RefreshCcw size={13} />
+                                    Sync Old Messages
+                                </button>
+                                <button onClick={handleClearLogsWrapper} className="btn-icon w-8 h-8 rounded-lg text-rose-400 hover:bg-rose-500/10" title="Clear All Logs">
                                     <Trash2 size={16} />
+                                </button>
+                                <button onClick={handleDeleteDeviceWrapper} className="btn-icon w-8 h-8 rounded-lg text-rose-600 bg-rose-500/10 hover:bg-rose-600 hover:text-white transition-colors border border-rose-500/20" title="DELETE DEVICE PERMANENTLY">
+                                    <Smartphone size={16} />
                                 </button>
                                 <div className="h-4 w-[1px] bg-theme/20 mx-1"></div>
                                 <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20">

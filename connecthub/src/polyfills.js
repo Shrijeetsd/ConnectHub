@@ -30,10 +30,17 @@ if (global.process) {
   }
 }
 
-// Polyfill zlib constants to prevent Axios crash in some distributions
-global.zlib = global.zlib || {
-  constants: {
+// Polyfill zlib constants to prevent Axios/form-data crash
+if (typeof global.zlib === 'undefined') {
+  global.zlib = {
+    constants: {
+      Z_SYNC_FLUSH: 2,
+      Z_FINISH: 4,
+    },
+  };
+} else if (typeof global.zlib.constants === 'undefined') {
+  global.zlib.constants = {
     Z_SYNC_FLUSH: 2,
     Z_FINISH: 4,
-  },
-};
+  };
+}

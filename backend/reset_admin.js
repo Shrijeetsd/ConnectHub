@@ -11,16 +11,16 @@ const resetPassword = async () => {
 
         let user = await User.findOne({ username: 'admin' });
         if (user) {
-            user.password = 'password123';
+            user.password = 'admin123';
             await user.save();
-            console.log('Admin password hashed and updated');
+            console.log('Admin password hashed and updated to: admin123');
         } else {
             await User.create({
                 username: 'admin',
-                password: 'password123',
+                password: 'admin123',
                 role: 'admin'
             });
-            console.log('Admin user created and password hashed');
+            console.log('Admin user created with password: admin123');
         }
         process.exit(0);
     } catch (error) {

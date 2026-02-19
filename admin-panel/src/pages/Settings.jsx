@@ -26,7 +26,7 @@ const Settings = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="max-w-2xl mx-auto pt-10 w-full"
+            className="max-w-2xl mx-auto w-full"
         >
             <div className="theme-panel rounded-2xl p-10 shadow-2xl relative overflow-hidden backdrop-blur-xl">
                 <div className="flex flex-col items-center mb-10 text-center relative z-10">

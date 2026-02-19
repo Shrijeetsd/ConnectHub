@@ -114,4 +114,67 @@ router.post('/update-status', protect, async (req, res) => {
     }
 });
 
+// @desc    Request device to re-sync old messages
+// @route   POST /api/device/request-sync/:id
+// @access  Private
+router.post('/request-sync/:id', protect, async (req, res) => {
+    try {
+        const device = await Device.findOneAndUpdate(
+            { device_id: req.params.id },
+            { $set: { sync_requested: true } },
+            { new: true }
+        );
+
+        if (!device) {
+            return res.status(404).json({ message: 'Device not found' });
+        }
+
+        res.json({ success: true, message: 'Sync request queued for device' });
+    } catch (err) {
+        console.error("Request sync error:", err);
+        res.status(500).json({ message: 'Server Error' });
+    }
+});
+
+// @desc    Clear sync_requested flag after device acknowledges
+// @route   POST /api/device/clear-sync-flag/:id
+// @access  Private
+router.post('/clear-sync-flag/:id', protect, async (req, res) => {
+    try {
+        await Device.findOneAndUpdate(
+            { device_id: req.params.id },
+            { $set: { sync_requested: false } }
+        );
+        res.json({ success: true });
+    } catch (err) {
+        console.error("Clear sync flag error:", err);
+        res.status(500).json({ message: 'Server Error' });
+    }
+});
+
+// @desc    Delete device and its logs
+// @route   DELETE /api/device/:id
+// @access  Private
+router.delete('/:id', protect, async (req, res) => {
+    try {
+        const deviceId = req.params.id;
+
+        // 1. Delete the device
+        const device = await Device.findOneAndDelete({ device_id: deviceId });
+
+        if (!device) {
+            return res.status(404).json({ message: 'Device not found' });
+        }
+
+        // 2. Delete all associated logs
+        const SmsLog = require('../models/SmsLog');
+        await SmsLog.deleteMany({ device_id: deviceId });
+
+        res.json({ message: 'Device and its logs removed successfully' });
+    } catch (err) {
+        console.error("Delete device error:", err);
+        res.status(500).json({ message: 'Server Error' });
+    }
+});
+
 module.exports = router;

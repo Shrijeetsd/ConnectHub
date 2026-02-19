@@ -27,6 +27,10 @@ const DeviceSchema = new mongoose.Schema({
     },
     name: { // User editable friendly name
         type: String
+    },
+    sync_requested: { // Admin can request device to re-sync old messages
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true });
 
