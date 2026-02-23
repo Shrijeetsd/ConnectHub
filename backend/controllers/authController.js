@@ -1,5 +1,16 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const { authenticator } = require('otplib');
+const qrcode = require('qrcode');
+
+const getMe = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id).select('-password');
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+};
 
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -7,7 +18,7 @@ const generateToken = (id) => {
     });
 };
 
-// @desc    Auth user & get token
+// @desc    Auth user & get token (Step 1)
 // @route   POST /api/auth/login
 // @access  Public
 const authUser = async (req, res) => {
@@ -15,36 +26,137 @@ const authUser = async (req, res) => {
         const { username, password } = req.body;
         console.log(`[AUTH] Login attempt for: '${username}'`);
 
-        const user = await User.findOne({ username });
-
-        if (user) {
-            console.log(`[AUTH] User found: '${user.username}', Role: ${user.role}`);
-            const isMatch = await user.matchPassword(password);
-            console.log(`[AUTH] Password match: ${isMatch}`);
-
-            if (isMatch) {
-                res.json({
-                    _id: user._id,
-                    username: user.username,
-                    name: user.name,
-                    email: user.email,
-                    phoneNumber: user.phoneNumber,
-                    role: user.role,
-                    token: generateToken(user._id),
-                });
-                return;
-            }
-        } else {
-            console.log(`[AUTH] User not found: '${username}'`);
+        if (!username || !password) {
+            return res.status(400).json({ message: 'Username and password are required' });
         }
 
-        res.status(401).json({ message: 'Invalid username or password' });
+        const user = await User.findOne({ username: { $regex: new RegExp(`^${username}$`, 'i') } });
+
+        if (user) {
+            const isMatch = await user.matchPassword(password);
+            if (isMatch) {
+                // Check if 2FA is enabled
+                if (user.twoFactorEnabled) {
+                    return res.json({
+                        mfaRequired: true,
+                        userId: user._id,
+                        username: user.username
+                    });
+                }
+
+                const token = generateToken(user._id);
+                console.log(`[AUTH] SUCCESS for user: '${username}'`);
+                return res.json({
+                    _id: user._id,
+                    username: user.username,
+                    role: user.role,
+                    token: token,
+                });
+            } else {
+                console.log(`[AUTH] FAILED: Password mismatch for user: '${username}'`);
+            }
+        } else {
+            console.log(`[AUTH] FAILED: User not found: '${username}'`);
+        }
+
+        return res.status(401).json({ message: 'Invalid username or password' });
     } catch (error) {
-        console.error('Auth Error:', error.message);
-        res.status(500).json({
-            message: 'Authentication service unavailable',
-            error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        console.error('[AUTH ERROR]:', error);
+        return res.status(500).json({ message: 'Internal Server Error', error: error.message });
+    }
+};
+
+// @desc    Verify 2FA Token for Login (Step 2)
+// @route   POST /api/auth/verify-2fa
+// @access  Public
+const login2FA = async (req, res) => {
+    try {
+        const { userId, token: mfaToken } = req.body;
+
+        const user = await User.findById(userId);
+        if (!user || !user.twoFactorEnabled) {
+            return res.status(401).json({ message: 'Authentication failed' });
+        }
+
+        const isValid = authenticator.verify({
+            token: mfaToken,
+            secret: user.twoFactorSecret
         });
+
+        if (isValid) {
+            const token = generateToken(user._id);
+            return res.json({
+                _id: user._id,
+                username: user.username,
+                role: user.role,
+                token: token,
+            });
+        } else {
+            return res.status(401).json({ message: 'Invalid 2FA code' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+// @desc    Setup 2FA (Get QR Code)
+// @route   POST /api/auth/setup-2fa
+// @access  Private
+const setup2FA = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        const secret = authenticator.generateSecret();
+        const otpauth = authenticator.keyuri(user.username, 'ConnectHub', secret);
+        const qrCodeUrl = await qrcode.toDataURL(otpauth);
+
+        user.twoFactorSecret = secret;
+        await user.save();
+
+        res.json({ qrCodeUrl, secret });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+// @desc    Verify & Enable 2FA
+// @route   POST /api/auth/verify-setup-2fa
+// @access  Private
+const verifySetup2FA = async (req, res) => {
+    try {
+        const { token } = req.body;
+        const user = await User.findById(req.user._id);
+
+        const isValid = authenticator.verify({
+            token,
+            secret: user.twoFactorSecret
+        });
+
+        if (isValid) {
+            user.twoFactorEnabled = true;
+            await user.save();
+            res.json({ message: '2FA enabled successfully' });
+        } else {
+            res.status(400).json({ message: 'Invalid token' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+// @desc    Disable 2FA
+// @route   POST /api/auth/disable-2fa
+// @access  Private
+const disable2FA = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        user.twoFactorEnabled = false;
+        user.twoFactorSecret = null;
+        await user.save();
+        res.json({ message: '2FA disabled successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
     }
 };
 
@@ -196,4 +308,4 @@ const updateUser = async (req, res) => {
     }
 };
 
-module.exports = { authUser, registerUser, createUser, getUsers, deleteUser, updateUser };
+module.exports = { authUser, registerUser, createUser, getUsers, deleteUser, updateUser, login2FA, setup2FA, verifySetup2FA, disable2FA, getMe };

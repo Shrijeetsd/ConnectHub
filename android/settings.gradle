@@ -13,6 +13,6 @@ dependencyResolutionManagement {3
     }
 }
 
-// तुमच्या ॲपच्या नवीन नावाप्रमाणे (Connect Hub) बदलले आहे
-rootProject.name = "Connect Hub"
+// तुमच्या ॲपच्या नवीन नावाप्रमाणे (ConnectHub) बदलले आहे
+rootProject.name = "ConnectHub"
 include ':app'

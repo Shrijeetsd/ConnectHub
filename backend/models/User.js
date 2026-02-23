@@ -24,6 +24,13 @@ const UserSchema = new mongoose.Schema({
         type: String,
         enum: ['admin', 'user'],
         default: 'user'
+    },
+    twoFactorSecret: {
+        type: String
+    },
+    twoFactorEnabled: {
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true });
 

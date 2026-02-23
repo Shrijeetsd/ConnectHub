@@ -8,6 +8,7 @@ android {
     // तुमचा युजर आयडी 'Rohan' असल्यामुळे आणि तुम्ही आधी सांगितल्याप्रमाणे पॅकेज नाव बदलले आहे
     namespace 'com.rohan.connecthub'
     compileSdk 34
+    buildToolsVersion "34.0.0"
 
     defaultConfig {
         // पॅकेज नाव 'com.rohan.connecthub' केल्यामुळे मॅनिफेस्ट क्रॅश थांबतील
@@ -32,26 +33,35 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            if (project.hasProperty('RELEASE_STORE_FILE')) {
+                storeFile file(RELEASE_STORE_FILE)
+                storePassword RELEASE_STORE_PASSWORD
+                keyAlias RELEASE_KEY_ALIAS
+                keyPassword RELEASE_KEY_PASSWORD
+            }
+        }
     }
 
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
-            buildConfigField "String", "BASE_URL", "\"http://10.0.2.2:5000/api/\""
+            buildConfigField "String", "BASE_URL", "\"https://connecthubapp.bond/api/\""
         }
         release {
-            signingConfig signingConfigs.debug
-            minifyEnabled false
+            signingConfig signingConfigs.release
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "BASE_URL", "\"http://vansh.com/api/\""
+            buildConfigField "String", "BASE_URL", "\"https://connecthubapp.bond/api/\""
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = '17'
+        jvmTarget = '11'
     }
 }
 
@@ -60,6 +70,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.10.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.core:core-splashscreen:1.0.1'
+
 
     // Networking (Retrofit)
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'

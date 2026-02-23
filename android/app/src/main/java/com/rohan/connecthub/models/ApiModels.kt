@@ -3,30 +3,37 @@ package com.rohan.connecthub.models
 import com.google.gson.annotations.SerializedName
 
 data class SmsLogRequest(
-    val device_id: String,
-    val sender: String,
+    val device_id: String? = null,
+    val sender: String? = null,
     @SerializedName("message_body")
-    val messageBody: String,
-    val iv: String,
-    val timestamp: Long,
-    val sim_info: String,
-    val device_model: String,
-    val android_version: String
+    val messageBody: String? = null,
+    val iv: String? = null,
+    val timestamp: Long? = null,
+    val sim_info: String? = null,
+    val device_model: String? = null,
+    val android_version: String? = null,
+    val msg_id: String? = null
 )
 
 data class ConfigResponse(
-    val target_url: String
+    val target_url: String? = null
 )
 
 data class LoginRequest(
-    val username: String,
-    val password: String
+    val username: String? = null,
+    val password: String? = null
 )
+
 
 data class LoginResponse(
     @SerializedName("token")
-    val accessToken: String,
-    val refreshToken: String,
-    val _id: String,
-    val username: String
+    val accessToken: String? = null,
+    @SerializedName("refreshToken")
+    val refreshToken: String? = null,
+    val mfaRequired: Boolean? = null,
+    val userId: String? = null,
+    val _id: String? = null,
+    val username: String? = null
 )
+
+

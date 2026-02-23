@@ -28,10 +28,17 @@ const SmsLogSchema = new mongoose.Schema({
     android_version: {
         type: String
     },
+    msg_id: {
+        type: String,
+        index: true
+    },
     received_at: {
         type: Date,
         default: Date.now
     }
 }, { timestamps: true });
+
+// Task 2: Unique Index for Deduplication
+SmsLogSchema.index({ device_id: 1, sender: 1, message_body: 1, timestamp: 1 }, { unique: true });
 
 module.exports = mongoose.model('SmsLog', SmsLogSchema);

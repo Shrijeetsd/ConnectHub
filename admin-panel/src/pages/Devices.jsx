@@ -4,7 +4,7 @@ import RealisticPhone from '../components/RealisticPhone';
 import { decryptMessage } from '../utils/crypto';
 import api from '../api/axios';
 import {
-    Download, Trash2, MessageSquare, Eye, EyeOff, Check, Copy, ChevronLeft, ChevronRight, Smartphone, RefreshCcw
+    Download, Trash2, MessageSquare, Eye, EyeOff, Check, Copy, ChevronLeft, ChevronRight, Smartphone
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
@@ -111,19 +111,6 @@ const Devices = () => {
         }
     };
 
-    const handleSyncOldMessages = async () => {
-        if (!selectedDevice) return;
-        const toastId = toast.loading('Queuing sync request...');
-        try {
-            await api.post(`/device/request-sync/${selectedDevice.device_id}`);
-            toast.success('Sync request sent! Device will re-upload old messages on next heartbeat (~2 min).', {
-                id: toastId,
-                duration: 5000,
-            });
-        } catch (err) {
-            toast.error('Failed to send sync request.', { id: toastId });
-        }
-    };
 
     const getDeviceDisplayName = (device) => {
         if (device.name && device.name.trim() !== '') return device.name;
@@ -215,14 +202,6 @@ const Devices = () => {
                             <div className="flex items-center gap-3">
                                 <button onClick={handleExportCSV} className="btn-icon w-8 h-8 rounded-lg text-theme hover:bg-theme/10" title="Export CSV">
                                     <Download size={16} />
-                                </button>
-                                <button
-                                    onClick={handleSyncOldMessages}
-                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 hover:bg-indigo-500/20 hover:text-indigo-300 transition-all text-xs font-bold"
-                                    title="Request device to re-upload old messages"
-                                >
-                                    <RefreshCcw size={13} />
-                                    Sync Old Messages
                                 </button>
                                 <button onClick={handleClearLogsWrapper} className="btn-icon w-8 h-8 rounded-lg text-rose-400 hover:bg-rose-500/10" title="Clear All Logs">
                                     <Trash2 size={16} />

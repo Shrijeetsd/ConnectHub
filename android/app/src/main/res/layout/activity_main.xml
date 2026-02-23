@@ -5,120 +5,103 @@
     android:layout_height="match_parent"
     android:background="#050505">
 
+    <!-- ===== LOGIN SCREEN ===== -->
     <LinearLayout
         android:id="@+id/loginLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_margin="28dp"
-        android:background="@drawable/glass_card_bg"
+        android:layout_marginHorizontal="28dp"
+        android:background="@drawable/login_card_bg"
         android:orientation="vertical"
-        android:padding="30dp"
+        android:padding="32dp"
         android:visibility="visible">
 
-        <ImageView
+        <!-- App Icon -->
+        <FrameLayout
             android:layout_width="90dp"
             android:layout_height="90dp"
             android:layout_gravity="center"
-            android:src="@drawable/app_logo"
-            android:layout_marginBottom="24dp"
-            android:contentDescription="App Logo"
-            android:background="@drawable/logo_frame"
-            android:padding="12dp"
-            android:elevation="8dp"/>
+            android:layout_marginBottom="28dp">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/logo_frame"
+                android:src="@drawable/app_logo"
+                android:scaleType="centerInside"
+                android:padding="15dp"
+                android:elevation="6dp"
+                android:contentDescription="ConnectHub Logo" />
+        </FrameLayout>
 
+        <!-- Title -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="CONNECTHUB ACCESS"
+            android:text="CONNECTHUB"
             android:textColor="#FFFFFF"
-            android:textSize="24sp"
-            android:letterSpacing="0.1"
+            android:textSize="28sp"
             android:textStyle="bold"
+            android:letterSpacing="0.08"
             android:layout_gravity="center"
-            android:layout_marginBottom="4dp"/>
+            android:layout_marginBottom="6dp" />
 
+        <!-- Subtitle -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ConnectHub Mobile v2.0"
-            android:textColor="#475569"
-            android:textSize="12sp"
+            android:text="Secure Access Gateway"
+            android:textColor="#8898C8"
+            android:textSize="14sp"
             android:layout_gravity="center"
-            android:layout_marginBottom="36dp"/>
+            android:layout_marginBottom="40dp" />
 
+        <!-- Username Field -->
         <EditText
             android:id="@+id/usernameInput"
             android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:hint="Terminal ID"
+            android:layout_height="56dp"
+            android:hint="Username"
             android:textColor="#FFFFFF"
-            android:textColorHint="#334155"
-            android:paddingLeft="18dp"
+            android:textColorHint="#5A6490"
+            android:textSize="15sp"
+            android:paddingHorizontal="18dp"
             android:background="@drawable/input_field_bg"
-            android:layout_marginBottom="16dp"/>
+            android:inputType="text"
+            android:layout_marginBottom="14dp"
+            android:singleLine="true" />
 
+        <!-- Password Field -->
         <EditText
             android:id="@+id/passwordInput"
             android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:hint="Access Key"
+            android:layout_height="56dp"
+            android:hint="Password"
             android:inputType="textPassword"
             android:textColor="#FFFFFF"
-            android:textColorHint="#334155"
-            android:paddingLeft="18dp"
+            android:textColorHint="#5A6490"
+            android:textSize="15sp"
+            android:paddingHorizontal="18dp"
             android:background="@drawable/input_field_bg"
-            android:layout_marginBottom="28dp"/>
+            android:layout_marginBottom="28dp"
+            android:singleLine="true" />
 
+        <!-- Login Button -->
         <Button
             android:id="@+id/loginButton"
             android:layout_width="match_parent"
             android:layout_height="58dp"
-            android:text="AUTHORIZE"
+            android:text="LOGIN"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
             android:textStyle="bold"
-            android:backgroundTint="#6366F1"
-            android:textAllCaps="true"
-            app:cornerRadius="14dp"/>
+            android:letterSpacing="0.1"
+            android:background="@drawable/login_btn_bg"
+            android:stateListAnimator="@null" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="SECURE AUTH OPTIONS"
-            android:textColor="#1E293B"
-            android:textSize="10sp"
-            android:textStyle="bold"
-            android:layout_gravity="center"
-            android:layout_marginVertical="20dp"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="2">
-
-            <Button
-                android:id="@+id/googleLoginButton"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="55dp"
-                android:layout_weight="1"
-                android:text="GOOGLE"
-                android:layout_marginEnd="5dp"
-                android:textColor="#FFFFFF"
-                app:strokeColor="#1E293B" />
-
-            <Button
-                android:id="@+id/otpLoginButton"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="55dp"
-                android:layout_weight="1"
-                android:text="OTP"
-                android:layout_marginStart="5dp"
-                android:textColor="#FFFFFF"
-                app:strokeColor="#1E293B" />
-        </LinearLayout>
     </LinearLayout>
+
+
 
     <LinearLayout
         android:id="@+id/dashboardLayout"
@@ -126,81 +109,60 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:visibility="gone"
-        android:padding="24dp"
         android:background="#050505">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="CONNECTHUB MONITOR"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:letterSpacing="0.2"
-            android:layout_marginBottom="32dp"/>
-
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/glass_card_bg"
-            android:padding="24dp"
-            android:orientation="vertical">
+            android:padding="16dp"
+            android:background="#0F172A">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CONNECTHUB PORTAL"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_centerVertical="true"/>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="CONNECTION STATUS"
-                    android:textColor="#475569"
-                    android:textSize="11sp"
-                    android:textStyle="bold"/>
-                <View
-                    android:id="@+id/pulseDot"
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
-                    android:layout_alignParentEnd="true"
-                    android:background="@drawable/pulse_dot"/>
-            </RelativeLayout>
+        </RelativeLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#1E293B"/>
+
+        <WebView
+            android:id="@+id/portalWebView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="#050505"/>
+
+        <LinearLayout
+            android:id="@+id/statusStrip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp"
+            android:background="#0F172A"
+            android:gravity="center">
+            <View
+                android:id="@+id/pulseDot"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:background="@drawable/pulse_dot"
+                android:layout_marginEnd="8dp"/>
             <TextView
                 android:id="@+id/statusText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="ENCRYPTED &amp; ACTIVE"
                 android:textColor="#10B981"
-                android:textSize="20sp"
-                android:layout_marginTop="8dp"
+                android:textSize="10sp"
                 android:textStyle="bold" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#1E293B"
-                android:layout_marginVertical="20dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Live streams are being redirected to your Web Console. Do not close this application."
-                android:textColor="#64748B"
-                android:textSize="13sp"
-                android:lineSpacingExtra="4dp"/>
         </LinearLayout>
-
-        <Space android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"/>
-
-        <Button
-            android:id="@+id/logoutButton"
-            android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:text="TERMINATE CONNECTION"
-            android:textColor="#FFFFFF"
-            android:backgroundTint="#EF4444"
-            app:cornerRadius="12dp"
-            android:layout_marginBottom="20dp"/>
-
     </LinearLayout>
+
 
 </RelativeLayout>

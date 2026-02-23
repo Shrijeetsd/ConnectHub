@@ -1,9 +1,19 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
   <!-- Base application theme. -->
-  <style name="Base.Theme.SMSReceiver" parent="Theme.Material3.DayNight.NoActionBar">
-    <!-- Customize your light theme here. -->
-    <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+  <style name="Base.Theme.ConnectHub" parent="Theme.Material3.DayNight.NoActionBar">
+    <item name="colorPrimary">@color/primary</item>
+    <item name="android:statusBarColor">@color/background</item>
+    <item name="android:windowBackground">@color/background</item>
+    <item name="android:navigationBarColor">@color/background</item>
   </style>
 
-  <style name="Theme.SMSReceiver" parent="Base.Theme.SMSReceiver" />
+  <style name="Theme.ConnectHub" parent="Base.Theme.ConnectHub" />
+
+  <!-- Splash Screen Theme -->
+  <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+    <item name="windowSplashScreenBackground">@color/background</item>
+    <item name="windowSplashScreenAnimatedIcon">@drawable/app_logo</item>
+    <item name="postSplashScreenTheme">@style/Theme.ConnectHub</item>
+  </style>
 </resources>
+

@@ -2,10 +2,16 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import api from '../api/axios';
 import { toast } from 'sonner';
 import { useAuth } from './AuthContext';
+import { io } from 'socket.io-client';
 
 const DataContext = createContext();
 
 export const useData = () => useContext(DataContext);
+
+// Task 3: Socket connection initialization
+const SOCKET_URL = import.meta.env.VITE_API_URL
+    ? import.meta.env.VITE_API_URL.replace('/api', '')
+    : window.location.origin;
 
 export const DataProvider = ({ children }) => {
     const { user } = useAuth();
@@ -22,6 +28,47 @@ export const DataProvider = ({ children }) => {
         }
     }, []);
 
+    // Task 3: Setup Socket.io Listener
+    useEffect(() => {
+        if (!user) return;
+
+        const socket = io(SOCKET_URL);
+
+        socket.on('connect', () => {
+            console.log('[SOCKET] Connected to server');
+        });
+
+        socket.on('new_sms', (newSms) => {
+            console.log('[SOCKET] New SMS received:', newSms);
+
+            // 1. Update Logs List (Instant show)
+            setSmsLogs(prev => {
+                // Deduplication check on client side just in case
+                if (prev.some(log => log._id === newSms._id)) return prev;
+                return [newSms, ...prev];
+            });
+
+            // 2. Trigger Notification
+            if ('Notification' in window && Notification.permission === 'granted' && (document.hidden || !document.hasFocus())) {
+                new Notification(`New Message from ${newSms.device_name || 'Device'}`, {
+                    body: `${newSms.sender}: ${newSms.message_body}`,
+                    icon: '/logo.png'
+                });
+            }
+
+            // 3. Update related device last_seen if visible
+            setDevices(prev => prev.map(d =>
+                d.device_id === newSms.device_id
+                    ? { ...d, last_seen: new Date().toISOString(), is_online: true }
+                    : d
+            ));
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, [user]);
+
     const fetchData = useCallback(async (isBackground = false) => {
         if (!user) return; // Don't fetch if not logged in
         if (!isBackground) setLoading(true);
@@ -36,22 +83,8 @@ export const DataProvider = ({ children }) => {
             setDevices(devicesRes.data);
             setConfigUrl(configRes.data.value || "");
 
-            // Notification Logic
-            const latestLogs = logsRes.data;
-            if (latestLogs.length > 0) {
-                const latestLog = latestLogs[0];
-                if (lastLogId && latestLog._id !== lastLogId) {
-                    // Notify if hidden or tab not focused
-                    if ('Notification' in window && Notification.permission === 'granted' && (document.hidden || !document.hasFocus())) {
-                        const deviceName = devicesRes.data.find(d => d.device_id === latestLog.device_id)?.model || 'Unknown Device';
-                        new Notification(`New Message from ${deviceName}`, {
-                            body: `${latestLog.sender}: ${latestLog.message_body}`,
-                            icon: '/logo.png'
-                        });
-                    }
-                }
-                setLastLogId(latestLog._id);
-
+            if (logsRes.data.length > 0) {
+                setLastLogId(logsRes.data[0]._id);
             }
         } catch (err) {
             console.error("Fetch error", err);
@@ -59,11 +92,11 @@ export const DataProvider = ({ children }) => {
         } finally {
             if (!isBackground) setLoading(false);
         }
-    }, [lastLogId, user]);
+    }, [user]);
 
     useEffect(() => {
         fetchData();
-        const interval = setInterval(() => fetchData(true), 15000); // Global refresh every 15s
+        const interval = setInterval(() => fetchData(true), 30000); // Polling reduced as backup
         return () => clearInterval(interval);
     }, [fetchData]);
 

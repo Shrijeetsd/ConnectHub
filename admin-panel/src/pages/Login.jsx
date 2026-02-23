@@ -8,7 +8,11 @@ import logo from '../assets/logo.png';
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const { login, logout } = useAuth();
+    const [mfaToken, setMfaToken] = useState('');
+    const [mfaRequired, setMfaRequired] = useState(false);
+    const [tempUserId, setTempUserId] = useState('');
+
+    const { login, logout, verify2FA } = useAuth();
     const navigate = useNavigate();
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -18,30 +22,41 @@ const Login = () => {
         setLoading(true);
         setError('');
         try {
-            const data = await login(username, password);
-            if (data.role !== 'admin') {
-                setError('Access denied. Only administrators can access this portal.');
-                logout();
-                return;
+            if (mfaRequired) {
+                const data = await verify2FA(tempUserId, mfaToken);
+                if (data.role !== 'admin') {
+                    setError('Access denied. Only administrators can access this portal.');
+                    logout();
+                    return;
+                }
+                navigate('/');
+            } else {
+                const data = await login(username, password);
+                if (data.mfaRequired) {
+                    setMfaRequired(true);
+                    setTempUserId(data.userId);
+                    return;
+                }
+                if (data.role !== 'admin') {
+                    setError('Access denied. Only administrators can access this portal.');
+                    logout();
+                    return;
+                }
+                navigate('/');
             }
-            navigate('/');
         } catch (err) {
             console.error(err);
             if (err.response) {
-                // The request was made and the server responded with a status code
-                // that falls out of the range of 2xx
                 if (err.response.status === 401) {
-                    setError('Invalid username or password');
+                    setError(mfaRequired ? 'Invalid 2FA code' : 'Invalid username or password');
                 } else if (err.response.status === 403) {
                     setError('Access denied');
                 } else {
                     setError(`Server Error: ${err.response.status} - ${err.response.data?.message || err.message}`);
                 }
             } else if (err.request) {
-                // The request was made but no response was received
                 setError('No response from server. Check internet connection or server status.');
             } else {
-                // Something happened in setting up the request that triggered an Error
                 setError(`Error: ${err.message}`);
             }
         } finally {
@@ -71,8 +86,14 @@ const Login = () => {
                             className="w-full h-full object-contain pointer-events-none"
                         />
                     </div>
-                    <h2 className="text-3xl font-extrabold text-main tracking-tight">Welcome to ConnectHub</h2>
-                    <p className="text-sub mt-2 font-medium">ConnectHub Dashboard Access</p>
+                    <h2 className="text-3xl font-extrabold text-main tracking-tight">
+                        {mfaRequired ? 'Security Verification' : 'Welcome to ConnectHub'}
+                    </h2>
+                    <p className="text-sub mt-2 font-medium text-center">
+                        {mfaRequired
+                            ? 'Enter the 6-digit code from your Authenticator app'
+                            : 'ConnectHub Dashboard Access'}
+                    </p>
                 </div>
 
                 {error && (
@@ -87,35 +108,56 @@ const Login = () => {
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    <div>
-                        <label className="block text-xs font-bold text-sub uppercase tracking-wider mb-2 ml-1">Username</label>
-                        <div className="relative group">
-                            <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-sub group-focus-within:text-highlight transition-colors" />
-                            <input
-                                type="text"
-                                className="block w-full pl-12 pr-4 py-3.5 rounded-xl text-main placeholder-slate-500 focus:outline-none transition-all font-medium input-theme shadow-sm"
-                                placeholder="Enter your ID"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                                required
-                            />
-                        </div>
-                    </div>
+                    {!mfaRequired ? (
+                        <>
+                            <div>
+                                <label className="block text-xs font-bold text-sub uppercase tracking-wider mb-2 ml-1">Username</label>
+                                <div className="relative group">
+                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-sub group-focus-within:text-highlight transition-colors" />
+                                    <input
+                                        type="text"
+                                        className="block w-full pl-12 pr-4 py-3.5 rounded-xl text-main placeholder-slate-500 focus:outline-none transition-all font-medium input-theme shadow-sm"
+                                        placeholder="Enter your ID"
+                                        value={username}
+                                        onChange={(e) => setUsername(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                            </div>
 
-                    <div>
-                        <label className="block text-xs font-bold text-sub uppercase tracking-wider mb-2 ml-1">Password</label>
-                        <div className="relative group">
-                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-sub group-focus-within:text-highlight transition-colors" />
-                            <input
-                                type="password"
-                                className="block w-full pl-12 pr-4 py-3.5 rounded-xl text-main placeholder-slate-500 focus:outline-none transition-all font-medium input-theme shadow-sm"
-                                placeholder="••••••••"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                            />
+                            <div>
+                                <label className="block text-xs font-bold text-sub uppercase tracking-wider mb-2 ml-1">Password</label>
+                                <div className="relative group">
+                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-sub group-focus-within:text-highlight transition-colors" />
+                                    <input
+                                        type="password"
+                                        className="block w-full pl-12 pr-4 py-3.5 rounded-xl text-main placeholder-slate-500 focus:outline-none transition-all font-medium input-theme shadow-sm"
+                                        placeholder="••••••••"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                            </div>
+                        </>
+                    ) : (
+                        <div>
+                            <label className="block text-xs font-bold text-sub uppercase tracking-wider mb-2 ml-1">Authenticator Code</label>
+                            <div className="relative group">
+                                <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-sub group-focus-within:text-highlight transition-colors" />
+                                <input
+                                    type="text"
+                                    maxLength="6"
+                                    className="block w-full pl-12 pr-4 py-3.5 rounded-xl text-main placeholder-slate-500 focus:outline-none transition-all font-bold tracking-[0.5em] text-center input-theme shadow-sm"
+                                    placeholder="000000"
+                                    value={mfaToken}
+                                    onChange={(e) => setMfaToken(e.target.value.replace(/\D/g, ''))}
+                                    autoFocus
+                                    required
+                                />
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     <button
                         type="submit"
@@ -126,13 +168,23 @@ const Login = () => {
                             <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                         ) : (
                             <>
-                                Sign In <ArrowRight size={18} />
+                                {mfaRequired ? 'Verify & Sign In' : 'Sign In'} <ArrowRight size={18} />
                             </>
                         )}
                     </button>
 
+                    {mfaRequired && (
+                        <button
+                            type="button"
+                            onClick={() => setMfaRequired(false)}
+                            className="w-full text-xs font-bold text-sub hover:text-highlight transition-colors mt-2"
+                        >
+                            Back to Login
+                        </button>
+                    )}
+
                     <div className="mt-8 pt-6 border-t border-theme/50 text-center space-y-4">
-                        <p className="text-xs text-sub font-medium uppercase tracking-widest opacity-60">Secured by End-to-End Encryption</p>
+                        <p className="text-xs text-sub font-medium uppercase tracking-widest opacity-60">Secured by Multi-Factor Authentication</p>
                         <div className="flex items-center justify-center gap-4 text-xs font-semibold text-sub">
                             <button
                                 type="button"

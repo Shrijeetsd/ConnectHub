@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/login_card_bg"
+    android:orientation="vertical"
+    android:padding="28dp">
+
+    <!-- App Icon -->
+    <ImageView
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_gravity="center"
+        android:background="@drawable/logo_frame"
+        android:src="@drawable/app_logo"
+        android:scaleType="centerInside"
+        android:padding="12dp"
+        android:elevation="6dp"
+        android:contentDescription="ConnectHub Icon"
+        android:layout_marginBottom="20dp" />
+
+    <!-- Title -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Background Service Setup"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginBottom="14dp" />
+
+    <!-- Description -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="To ensure ConnectHub stays online and syncs messages, you must disable Battery Optimizations for this app."
+        android:textColor="#C8D0E7"
+        android:textSize="13sp"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp"
+        android:layout_marginBottom="18dp" />
+
+    <!-- Numbered Instructions in red -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="1. Click &quot;Open Settings&quot; below.\n2. Find &quot;ConnectHub&quot;.\n3. Select &quot;Don&apos;t Optimize&quot; or &quot;Unrestricted&quot;.\n4. Come back and click &quot;I Have Done It&quot;."
+        android:textColor="#FF5252"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:lineSpacingExtra="6dp"
+        android:layout_marginBottom="26dp" />
+
+
+    <!-- Open Settings Button -->
+    <Button
+        android:id="@+id/btnOpenSettings"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:text="Open Settings"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:background="@drawable/btn_teal_bg"
+        android:stateListAnimator="@null"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Done Button -->
+    <Button
+        android:id="@+id/btnDone"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:text="I Have Done It"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:background="@drawable/login_btn_bg"
+        android:stateListAnimator="@null" />
+
+</LinearLayout>

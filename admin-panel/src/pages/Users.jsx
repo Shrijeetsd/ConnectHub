@@ -24,7 +24,7 @@ const Users = () => {
 
     const fetchUsers = async () => {
         try {
-            const response = await api.get('/auth/users');
+            const response = await api.get('/users');
             setUsers(response.data);
         } catch (error) {
             console.error('Fetch users error:', error);
@@ -54,7 +54,7 @@ const Users = () => {
         if (window.confirm(`Permanently remove terminal access for "${username}"?`)) {
             const toastId = toast.loading('Removing user...');
             try {
-                await api.delete(`/auth/users/${userId}`);
+                await api.delete(`/users/${userId}`);
                 setUsers(users.filter(u => u._id !== userId));
                 toast.success('User removed from system', { id: toastId });
             } catch (error) {
@@ -77,7 +77,7 @@ const Users = () => {
                 const { confirmPassword, ...submitData } = formData;
                 if (!submitData.password) delete submitData.password;
 
-                const response = await api.put(`/auth/users/${editingUser._id}`, submitData);
+                const response = await api.put(`/users/${editingUser._id}`, submitData);
                 setUsers(users.map(u => u._id === editingUser._id ? response.data : u));
                 setFormData({
                     username: '',
@@ -103,7 +103,7 @@ const Users = () => {
         const toastId = toast.loading('Registering terminal...');
         try {
             const { confirmPassword, ...submitData } = formData;
-            const response = await api.post('/auth/users', submitData);
+            const response = await api.post('/users', submitData);
             setUsers([...users, response.data]);
             setFormData({
                 username: '',
@@ -346,7 +346,9 @@ const Users = () => {
                                         </td>
                                         <td className="px-6 py-5 whitespace-nowrap">
                                             <div className="text-xs font-bold text-slate-400 font-mono">
-                                                {new Date(user.createdAt).toISOString().split('T')[0].replace(/-/g, '.')}
+                                                {user.createdAt
+                                                    ? new Date(user.createdAt).toISOString().split('T')[0].replace(/-/g, '.')
+                                                    : 'PRE-EXISTING'}
                                             </div>
                                         </td>
                                         <td className="px-6 py-5 whitespace-nowrap text-right space-x-2">

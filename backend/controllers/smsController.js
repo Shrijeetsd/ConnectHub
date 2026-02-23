@@ -6,11 +6,24 @@ const Device = require('../models/Device');
 // @access  Private
 const createSmsLog = async (req, res) => {
     try {
-        const { device_id, sender, message_body, timestamp, sim_info, device_model, android_version } = req.body;
+        const { device_id, sender, message_body, timestamp, sim_info, device_model, android_version, msg_id } = req.body;
 
         if (!device_id || !sender || !message_body || !timestamp || !sim_info) {
             console.log("Missing fields:", req.body);
             return res.status(400).json({ message: 'Please provide all fields' });
+        }
+
+        // Task 2: Deduplication Check
+        const existingSms = await SmsLog.findOne({
+            device_id,
+            sender,
+            message_body,
+            timestamp
+        });
+
+        if (existingSms) {
+            console.log(`Duplicate SMS skipped from ${sender} on device ${device_id}`);
+            return res.status(200).json(existingSms); // Idempotent success
         }
 
         console.log(`Received SMS from ${device_id}: ${sender}`);
@@ -23,8 +36,19 @@ const createSmsLog = async (req, res) => {
             timestamp,
             sim_info,
             device_model,
-            android_version
+            android_version,
+            msg_id
         });
+
+        // Task 3: Real-time Emit (Minimize Latency)
+        const io = req.app.get('socketio');
+        if (io) {
+            io.emit('new_sms', {
+                ...smsLog.toObject(),
+                device_name: device_model || `Device-${device_id.slice(-4)}`
+            });
+            console.log(`[SOCKET] Emitted new_sms event for sender: ${sender}`);
+        }
 
         // 2. Update or Register Device
         // We use upsert to create if not exists
@@ -101,7 +125,6 @@ const syncOldSms = async (req, res) => {
             device_id,
             sender: m.sender,
             message_body: m.message_body,
-            iv: m.iv,
             timestamp: m.timestamp,
             sim_info: m.sim_info || 'SIM_SLOT_0',
             device_model: m.device_model || 'Android Device',

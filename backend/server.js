@@ -1,8 +1,6 @@
 const dotenv = require('dotenv');
 dotenv.config();
 
-const Sentry = require("@sentry/node");
-const { nodeProfilingIntegration } = require("@sentry/profiling-node");
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -15,77 +13,116 @@ const configRoutes = require('./routes/configRoutes');
 
 const rateLimit = require('express-rate-limit');
 
-// Robust Sentry Init
-const SENTRY_DSN = process.env.SENTRY_DSN;
-if (SENTRY_DSN && SENTRY_DSN.startsWith('https') && !SENTRY_DSN.includes('mongo')) {
-    Sentry.init({
-        dsn: SENTRY_DSN,
-        integrations: [
-            nodeProfilingIntegration(),
-        ],
-        tracesSampleRate: 1.0,
-        profilesSampleRate: 1.0,
-    });
-} else {
-    console.warn("Sentry DSN invalid or missing, initializing with dummy DSN.");
-    Sentry.init({
-        dsn: "https://examplePublicKey@o0.ingest.sentry.io/0",
-        integrations: [],
-    });
-}
-
 connectDB();
 
 const app = express();
 
+// Trust Nginx Proxy
+app.set('trust proxy', 1);
+
 // Rate Limiting
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 1000, // Increased to avoid lockout
+    windowMs: 15 * 60 * 1000,
+    max: 2000,
     standardHeaders: true,
     legacyHeaders: false,
 });
 
 const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 500, // Increased significantly to avoid lockout during verification
-    message: "Too many login attempts, please try again after 15 minutes"
+    max: 100,
+    message: { message: "Too many login attempts, please try again after 15 minutes" }
 });
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : [frontendUrl, 'http://localhost:5173', 'http://127.0.0.1:5173'];
+const envOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : [];
+const allowedOrigins = [
+    ...envOrigins,
+    frontendUrl,
+    'http://localhost:5173',
+    'https://connecthubapp.bond',
+    'https://www.connecthubapp.bond',
+    'http://116.203.28.131'
+];
+
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin || allowedOrigins.indexOf(origin) !== -1 || origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1')) {
             callback(null, true);
         } else {
+            console.log('[CORS] Blocked origin:', origin);
             callback(new Error('Not allowed by CORS'));
         }
     },
     credentials: true,
 }));
+
 app.use(helmet({
-    crossOriginResourcePolicy: false, // Required for local network resource sharing
+    crossOriginResourcePolicy: false,
 }));
 app.use(morgan('dev'));
 
-// Apply global rate limiter to all requests
+// Request Logger for debugging
+app.use('/api', (req, res, next) => {
+    console.log(`[API REQUEST] ${req.method} ${req.url}`);
+    next();
+});
+
 app.use(limiter);
 
 app.get('/api/ping', (req, res) => res.json({ message: 'pong', time: new Date() }));
 
-app.use('/api/auth/login', loginLimiter);
-app.use('/api/auth', authRoutes);
+// Authentication routes
+app.post('/api/login', loginLimiter);
+app.use('/api', authRoutes); // This handles /api/login, /api/me etc.
+app.use('/api/auth', authRoutes); // Fallback for old apps
+
+// SMS and Config routes
 app.use('/api/sms', smsRoutes);
 app.use('/api/config', configRoutes);
 app.use('/api/device', require('./routes/deviceRoutes'));
 
-// The error handler must be before any other error middleware and after all controllers
-Sentry.setupExpressErrorHandler(app);
+// 404 handler for API
+app.use('/api', (req, res) => {
+    console.log(`[API 404] ${req.method} ${req.originalUrl}`);
+    res.status(404).json({ message: `API route not found: ${req.method} ${req.originalUrl}` });
+});
 
-const PORT = process.env.PORT || 5001;
+// Global Error Handler
+app.use((err, req, res, next) => {
+    console.error('[SERVER ERROR]:', err);
+    res.status(err.status || 500).json({
+        message: err.message || 'Internal Server Error',
+        error: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    });
+});
 
-app.listen(PORT, '0.0.0.0', () => {
+const PORT = process.env.PORT || 5000;
+
+// Task 3: Setup Socket.io
+const http = require('http');
+const { Server } = require('socket.io');
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: {
+        origin: allowedOrigins,
+        methods: ["GET", "POST"]
+    }
+});
+
+io.on('connection', (socket) => {
+    console.log(`[SOCKET] User connected: ${socket.id}`);
+    socket.on('disconnect', () => {
+        console.log(`[SOCKET] User disconnected: ${socket.id}`);
+    });
+});
+
+// Export io for use in controllers
+app.set('socketio', io);
+
+server.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on port ${PORT}`);
 });

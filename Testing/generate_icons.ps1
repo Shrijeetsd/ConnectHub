@@ -1,15 +1,16 @@
-
-Add-Type -AssemblyName System.Drawing
 $sourceLogo = "D:\Project\SMS Reciever\admin-panel\public\logo.png"
-$resDir = "D:\Project\SMS Reciever\connecthub\android\app\src\main\res"
+$resDir = "D:\Project\SMS Reciever\android\app\src\main\res"
 
 $sizes = @{
-    "mipmap-mdpi" = 48
-    "mipmap-hdpi" = 72
-    "mipmap-xhdpi" = 96
-    "mipmap-xxhdpi" = 144
+    "mipmap-mdpi"    = 48
+    "mipmap-hdpi"    = 72
+    "mipmap-xhdpi"   = 96
+    "mipmap-xxhdpi"  = 144
     "mipmap-xxxhdpi" = 192
 }
+
+# Ensure Drawing assembly is loaded
+Add-Type -AssemblyName System.Drawing
 
 function Resize-Image {
     param($srcPath, $destPath, $size)
@@ -33,7 +34,7 @@ function Create-Adaptive-Foreground {
     $graphics = [System.Drawing.Graphics]::FromImage($destImg)
     $graphics.Clear([System.Drawing.Color]::Transparent)
     
-    # Scale logo to 65% of canvas size to fit in safe zone
+    # Scale logo icon to 65% of canvas size to fit in safe zone
     $logoSize = [int]($canvasSize * 0.65)
     $offset = [int](($canvasSize - $logoSize) / 2)
     
@@ -45,6 +46,12 @@ function Create-Adaptive-Foreground {
     $destImg.Dispose()
     $srcImg.Dispose()
 }
+
+# Generate drawable logo
+$drawableDir = Join-Path $resDir "drawable"
+if (-not (Test-Path $drawableDir)) { New-Item -ItemType Directory -Path $drawableDir }
+Write-Host "Generating UI Logo..."
+Resize-Image $sourceLogo (Join-Path $drawableDir "app_logo.png") 512
 
 foreach ($dir in $sizes.Keys) {
     $size = $sizes[$dir]
@@ -62,11 +69,10 @@ foreach ($dir in $sizes.Keys) {
     Resize-Image $sourceLogo $destPathRound $size
     
     # Adaptive Foreground (usually 108dp equivalent)
-    # mdpi: 108, hdpi: 162, xhdpi: 216, xxhdpi: 324, xxxhdpi: 432
     $foregroundSize = [int]($size * 108 / 48)
     $destPathFG = Join-Path $targetDir "ic_launcher_foreground.png"
     Write-Host "Generating $destPathFG ($foregroundSize x $foregroundSize)..."
     Create-Adaptive-Foreground $sourceLogo $destPathFG $foregroundSize
 }
 
-Write-Host "Icon generation complete!"
+Write-Host "Icon generation complete for Native Android Project!"

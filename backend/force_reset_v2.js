@@ -1,23 +1,22 @@
 const mongoose = require('mongoose');
 const User = require('./models/User');
-require('dotenv').config();
+const dotenv = require('dotenv');
+dotenv.config();
 
-const reset = async () => {
-    try {
-        await mongoose.connect(process.env.MONGO_URI);
-        const user = await User.findOne({ username: 'admin' });
-        if (user) {
-            user.password = 'admin123';
-            await user.save();
-            console.log('---SUCCESS---');
-        } else {
-            console.log('---NOT_FOUND---');
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/sms_receiver')
+    .then(async () => {
+        let user = await User.findOne({ username: 'admin' });
+        if (!user) {
+            user = new User({ username: 'admin', role: 'admin' });
         }
-    } catch (e) {
-        console.error(e);
-    } finally {
-        process.exit();
-    }
-};
+        user.password = 'password123';
+        user.role = 'admin'; // Ensure role is admin
+        await user.save();
 
-reset();
+        console.log('Admin user updated/created with password: password123');
+        process.exit(0);
+    })
+    .catch(err => {
+        console.error(err);
+        process.exit(1);
+    });

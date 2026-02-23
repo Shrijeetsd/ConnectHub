@@ -1,64 +1,95 @@
-# ConnectHub
+# 📡 ConnectHub | Secure SMS & Device Gateway
 
-ConnectHub is a comprehensive device management and communication platform. It consists of a mobile application (React Native), a web-based admin panel (React/Vite), and a robust backend (Node.js/Express/MongoDB).
+**ConnectHub** is a production-grade, end-to-end communication platform designed for secure SMS synchronization and centralized device management. It features a high-performance **Native Android Application**, a modern **React Admin Dashboard**, and a scalable **Node.js Backend**.
 
-## Project Structure
+---
 
-*   **`admin-panel/`**: The web-based dashboard for administrators. Built with React, Vite, and Tailwind CSS.
-*   **`backend/`**: The RESTful API server. Built with Node.js, Express, and MongoDB. Handles authentication, device management, and SMS processing.
-*   **`connecthub/`**: The Android mobile application. Built with React Native. Handles SMS reception, status updates, and web view integration.
+## 🚀 Key Modules
 
-## Features
+### 📱 [Android Application](android/)
+Built with **Kotlin**, this is the core gateway for SMS synchronization.
+- **Background Sync**: Reliable SMS capture even when the app is closed.
+- **Glassmorphism UI**: Premium dark-themed interface for secure access.
+- **Battery Optimization Bypass**: Custom setup flow ensuring continuous operation.
+- **Invisible Service**: Suppressed foreground notifications for a seamless background experience.
 
-*   **Real-time Device Monitoring**: Track device status (online/offline) and details.
-*   **SMS Management**: Receive and sync SMS messages from mobile devices to the central dashboard.
-*   **User Management**: Create and manage users with role-based access control (Admin vs. User).
-*   **Secure Authentication**: JWT-based authentication with refresh tokens and encrypted storage on mobile.
-*   **Remote Updates**: Auto-deployment scripts for seamless updates to the VPS.
+### 💻 [Admin Panel](admin-panel/)
+A sleek, high-speed dashboard built with **React**, **Vite**, and **Tailwind CSS**.
+- **Real-time Monitoring**: Instant visibility into device statuses and SMS logs.
+- **Device Management**: Remote control and deletion of terminal devices.
+- **Advanced User Access**: Role-based permissions (Admin/User).
+- **Responsive Design**: Fully optimized for desktop and mobile views.
 
-## Getting Started
+### 🔧 [Backend API](backend/)
+A robust RESTful API powered by **Node.js**, **Express**, and **MongoDB**.
+- **Secure Auth**: JWT-based authentication with encrypted storage.
+- **Scalable Architecture**: Optimized for high-frequency data ingestion.
+- **Persistence**: Stable MongoDB integration for long-term record keeping.
+
+---
+
+## 📂 Project Structure
+
+```text
+ConnectHub/
+├── android/          # Native Android (Kotlin) Source Code
+├── admin-panel/      # React/Vite Admin Dashboard Source Code
+├── backend/          # Node.js/Express Backend Source Code
+├── Documents/        # Professional Setup & Deployment Guides
+└── Testing/          # Comprehensive QA Checklists
+```
+
+---
+
+## 🛠️ Getting Started
 
 ### Prerequisites
+- **Node.js** (v18+) & **npm**
+- **MongoDB** (Local or Atlas)
+- **Android Studio** (For building the APK)
 
-*   Node.js (v18+)
-*   MongoDB
-*   Android Studio (for mobile app development)
-*   Git
+### Installation & Development
 
-### Installation
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/Shrijeetsd/ConnectHub.git
+   cd ConnectHub
+   ```
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/Shrijeetsd/ConnectHub.git
-    cd ConnectHub
-    ```
+2. **Backend Setup**
+   ```bash
+   cd backend
+   npm install
+   # Configure .env based on .env.example
+   npm start
+   ```
 
-2.  **Backend Setup:**
-    ```bash
-    cd backend
-    npm install
-    cp .env.example .env # Configure your environment variables
-    npm start
-    ```
+3. **Admin Panel Setup**
+   ```bash
+   cd admin-panel
+   npm install
+   npm run dev
+   ```
 
-3.  **Admin Panel Setup:**
-    ```bash
-    cd admin-panel
-    npm install
-    npm run dev
-    ```
+4. **Android Build**
+   - Open the `android` folder in **Android Studio**.
+   - Build using `Build > Build Bundle(s) / APK(s) > Build APK(s)`.
 
-4.  **Mobile App Setup:**
-    ```bash
-    cd connecthub
-    npm install
-    npm run android
-    ```
+---
 
-## Deployment
+## 📖 Documentation
+Detailed guides are located in the `Documents/` directory for full production setup:
+- **[Quick Start Guide](Documents/QUICK_START_GUIDE.md)**
+- **[Production Readiness Report](Documents/PRODUCTION_READINESS_REPORT.md)**
+- **[Deployment Manual](Documents/GITHUB_DEPLOYMENT_GUIDE.md)**
 
-The project includes automated deployment scripts (`auto_deploy_v4.ps1`) for deploying the web and backend components to a VPS using SSH.
+---
 
-## License
+## 🛡️ Security Features
+- **End-to-end Encryption** for sensitive JWT tokens.
+- **Role-based Authentication** for all administrative operations.
+- **Secure Device Identification** using hardware-bound ANDROID_ID.
 
-[MIT License](LICENSE)
+---
+
+**ConnectHub © 2026** | *Secure Access Gateway*

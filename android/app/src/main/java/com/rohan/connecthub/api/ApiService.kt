@@ -13,13 +13,13 @@ import retrofit2.http.POST
 
 interface ApiService {
 
-    @POST("auth/login")
+    @POST("login")
     suspend fun login(@Body request: LoginRequest): Response<LoginResponse>
 
-    @POST("auth/refresh")
+    @POST("refresh")
     fun refreshToken(@Header("Authorization") refreshToken: String?): Call<LoginResponse>
 
-    @POST("auth/refresh")
+    @POST("refresh")
     suspend fun refreshTokenAsync(@Header("Authorization") refreshToken: String?): Response<LoginResponse>
 
     @POST("sms/upload")
