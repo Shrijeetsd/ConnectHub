@@ -7,14 +7,14 @@ The ConnectHub React Native application has been successfully integrated with th
 ## Key Accomplishments
 
 ### 1. Mobile-Web Integration (WebView)
-- **Seamless Transition**: Replaced native dashboard with an immersive WebView pointing to `https://connecthub.bond/devices`.
+- **Seamless Transition**: Replaced native dashboard with an immersive WebView pointing to `https://connecthubapp.bond/devices`.
 - **Session Bridge**: Automated session persistence. The app's JWT is injected into the WebView's `localStorage` on load, eliminating the need for a second login.
 - **Heartbeat System**: Implemented a "Mobile Detection" signal. Upon login, the app notifies the backend (`POST /api/device/update-status`), making the phone appear "Online" instantly on the dashboard.
 
 ### 2. Reliable SMS Synchronization
 - **Dynamic Identification**: Corrected `backgroundTask.js`. The app now uses the actual Android Device ID and Model for SMS uploads.
 - **Auto-Sync Trigger**: Background services are automatically started as soon as the WebView loads, ensuring no data lag.
-- **Global API Endpoint**: Updated `apiClient.js` to point to the production server at `https://connecthub.bond`.
+- **Global API Endpoint**: Updated `apiClient.js` to point to the production server at `https://connecthubapp.bond`.
 
 ### 3. Build & Deployment Optimization
 - **AGP 8 Compatibility**: Resolved "Namespace not specified" errors for multiple libraries (`react-native-encrypted-storage`, `webview`, etc.) via root `build.gradle` injection.
@@ -29,7 +29,7 @@ The ConnectHub React Native application has been successfully integrated with th
 ## Verification Steps
 1. **Install APK**: Copy the `app-release.apk` to your Android device and install it.
 2. **Login**: Use your ConnectHub credentials.
-3. **Check Dashboard**: Navigate to `https://connecthub.bond` on your PC. You should see your phone listed as "Online" with an emerald pulse.
+3. **Check Dashboard**: Navigate to `https://connecthubapp.bond` on your PC. You should see your phone listed as "Online" with an emerald pulse.
 4. **Test Sync**: Send an SMS to the phone. Wait ~30 seconds, and refresh the dashboard to see the message synced.
 
 ---

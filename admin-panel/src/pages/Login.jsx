@@ -3,7 +3,6 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Lock, User, ShieldCheck, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
-import logo from '../assets/logo.png';
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -81,7 +80,7 @@ const Login = () => {
                 <div className="flex flex-col items-center mb-8">
                     <div className="w-24 h-24 bg-white rounded-2xl flex items-center justify-center shadow-xl mb-6 overflow-hidden border-2 border-slate-100/50 p-3">
                         <img
-                            src={logo}
+                            src="/logo.png"
                             alt="ConnectHub Logo"
                             className="w-full h-full object-contain pointer-events-none"
                         />

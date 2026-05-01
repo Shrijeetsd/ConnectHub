@@ -88,7 +88,7 @@ const PrivacyPolicy = () => {
                             <h2 className="text-2xl font-semibold text-indigo-400 mb-4">6. Contact Us</h2>
                             <p>
                                 If you have any questions about this Privacy Policy, please contact us at
-                                <span className="text-indigo-400"> privacy@connecthub.bond</span>.
+                                <span className="text-indigo-400"> privacy@connecthubapp.bond</span>.
                             </p>
                         </section>
                     </div>

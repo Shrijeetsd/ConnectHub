@@ -5,18 +5,20 @@ import App from './App.jsx';
 import './index.css';
 import { ThemeProvider } from './context/ThemeContext';
 
-Sentry.init({
-  dsn: import.meta.env.VITE_SENTRY_DSN || "https://placeholder-dsn@sentry.io/0",
-  integrations: [
-    Sentry.browserTracingIntegration(),
-    Sentry.replayIntegration(),
-  ],
-  // Performance Monitoring
-  tracesSampleRate: 1.0,
-  // Session Replay
-  replaysSessionSampleRate: 0.1,
-  replaysOnErrorSampleRate: 1.0,
-});
+const SENTRY_DSN = import.meta.env.VITE_SENTRY_DSN;
+
+if (SENTRY_DSN && SENTRY_DSN !== "your_production_sentry_dsn_here" && !SENTRY_DSN.includes('placeholder')) {
+  Sentry.init({
+    dsn: SENTRY_DSN,
+    integrations: [
+      Sentry.browserTracingIntegration(),
+      Sentry.replayIntegration(),
+    ],
+    tracesSampleRate: 1.0,
+    replaysSessionSampleRate: 0.1,
+    replaysOnErrorSampleRate: 1.0,
+  });
+}
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

@@ -1,11 +1,11 @@
-# Domain Connection Guide - Connecthubapp.bond
+# Domain Connection Guide - connecthubapp.bond
 
-This guide explains how to connect your new domain `Connecthubapp.bond` to your VPS IP `116.203.28.131`.
+This guide explains how to connect your new domain `connecthubapp.bond` to your VPS IP `116.203.28.131`.
 
 ## 1. Hostinger DNS Setup
 
 1. Log in to your **Hostinger Control Panel**.
-2. Go to **Domains** -> **Connecthubapp.bond** -> **DNS / Nameservers**.
+2. Go to **Domains** -> **connecthubapp.bond** -> **DNS / Nameservers**.
 3. Add the following **A Records**:
 
 | Type | Name (Host) | Points to (Value) | TTL |
@@ -38,7 +38,7 @@ sudo apt update
 sudo apt install certbot python3-certbot-nginx -y
 
 # Obtain SSL Certificate
-sudo certbot --nginx -d Connecthubapp.bond -d www.Connecthubapp.bond
+sudo certbot --nginx -d connecthubapp.bond -d www.connecthubapp.bond
 ```
 
 Follow the prompts to enable automatic redirection to HTTPS.
@@ -46,5 +46,5 @@ Follow the prompts to enable automatic redirection to HTTPS.
 ## 4. Verification
 
 Once DNS propagates (usually takes a few minutes to an hour), you can visit:
-- http://Connecthubapp.bond
-- http://Connecthubapp.bond/devices
+- https://connecthubapp.bond
+- https://connecthubapp.bond/devices

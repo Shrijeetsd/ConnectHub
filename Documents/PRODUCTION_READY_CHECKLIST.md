@@ -9,7 +9,7 @@ As a Senior Fullstack Developer, I have compiled this comprehensive checklist fo
 Deployment-ready means it runs on a server. Production-ready means it survives, scales, and stays secure under real-world traffic.
 
 ### A. Infrastructure & Security (CRITICAL)
-- [ ] **SSL/TLS Encryption**: Ensure `https://connecthub.bond` has a valid, auto-renewing SSL certificate (Let's Encrypt).
+- [ ] **SSL/TLS Encryption**: Ensure `https://connecthubapp.bond` has a valid, auto-renewing SSL certificate (Let's Encrypt).
 - [ ] **Environment Isolation**: Absolute separation of `.env.development` and `.env.production`. No local DB strings in production!
 - [ ] **API Security**: 
     - [ ] Rate limiting (to prevent brute force/DDoS).
@@ -63,7 +63,7 @@ Based on our recent work, here is where we stand:
 
 | Feature | Status | Action Needed |
 | :--- | :--- | :--- |
-| **Web SSL** | ✅ Active | Already on `connecthub.bond` |
+| **Web SSL** | ✅ Active | Already on `connecthubapp.bond` |
 | **Mobile JWT Bridge** | ✅ Done | WebView sync is working |
 | **SMS Background Sync** | ✅ Done | WorkManager is active |
 | **Error Monitoring** | ✅ Implemented | Sentry initialized (Needs DSN in .env) |

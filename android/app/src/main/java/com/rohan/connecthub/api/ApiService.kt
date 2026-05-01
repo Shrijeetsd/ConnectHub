@@ -10,6 +10,8 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
 
 interface ApiService {
 
@@ -28,6 +30,6 @@ interface ApiService {
     @GET("device/config")
     suspend fun getConfig(): Response<ConfigResponse>
 
-    @retrofit2.http.PUT("device/heartbeat/{id}")
-    suspend fun sendHeartbeat(@retrofit2.http.Path("id") deviceId: String): Response<Unit>
+    @PUT("device/heartbeat/{id}")
+    suspend fun sendHeartbeat(@Path("id") deviceId: String): Response<Unit>
 }

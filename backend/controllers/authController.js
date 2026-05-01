@@ -24,7 +24,7 @@ const generateToken = (id) => {
 const authUser = async (req, res) => {
     try {
         const { username, password } = req.body;
-        console.log(`[AUTH] Login attempt for: '${username}'`);
+        console.log(`[AUTH] Login attempt for: '${username}' (Password Length: ${password ? password.length : 0})`);
 
         if (!username || !password) {
             return res.status(400).json({ message: 'Username and password are required' });
